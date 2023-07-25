@@ -3,7 +3,7 @@ import QtQuick.Controls
 
 Column {
     property string type: "Label"
-    property var mod
+    property var mod: function() {}
     property int min: 0
     property int max: 100
     property int defaultValue: 50

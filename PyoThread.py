@@ -47,6 +47,22 @@ class PyoThread(QObject):
             self.adsr1.setRelease(value * 0.001)
 
     @Slot(int)
+    def set_A(self, value):
+        self.set_ADSR("A", value)
+
+    @Slot(int)
+    def set_D(self, value):
+        self.set_ADSR("D", value)
+
+    @Slot(int)
+    def set_S(self, value):
+        self.set_ADSR("S", value)
+
+    @Slot(int)
+    def set_R(self, value):
+        self.set_ADSR("R", value)
+
+    @Slot(int)
     def set_octave(self, value):
         self.octave1.setTranspo(value * 12)
 
