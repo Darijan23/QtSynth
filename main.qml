@@ -1,6 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 
+import qtsynth.pyo 1
+import "Components"
+
 ApplicationWindow {
     width: 640
     height: 480
@@ -10,6 +13,10 @@ ApplicationWindow {
     property int dialInputMode: Dial.Vertical
     property bool toggleState: true
 
+    PyoThread {
+        id: pyo
+    }
+
     Column {
         anchors.fill: parent
         spacing: 10
@@ -18,155 +25,43 @@ ApplicationWindow {
             spacing: 10
 
             // Octave
-            Column {
-                Label {
-                    text: "Octave"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: octaveDial
-                    from: -2
-                    to: 2
-                    value: 0
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_octave(value)
-                    }
-                }
-
-                TextField {
-                    id: octaveInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(octaveDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= octaveDial.from && parsedValue <= octaveDial.to) {
-                            octaveDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: octave
+                type: "Octave"
+                min: -2
+                max: 2
+                defaultValue: 0
+                mod: pyo.set_octave(parseInt(textValue))
             }
 
             // Level
-            Column {
-                Label {
-                    text: "Level"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: levelDial
-                    from: 0
-                    to: 100
-                    value: 100
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_level(value)
-                    }
-                }
-
-                TextField {
-                    id: levelInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(levelDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= levelDial.from && parsedValue <= levelDial.to) {
-                            levelDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: level
+                type: "Level"
+                min: 0
+                max: 100
+                defaultValue: 100
+                mod: pyo.set_level(parseInt(textValue))
             }
 
             // Detune
-            Column {
-                Label {
-                    text: "Detune"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: detuneDial
-                    from: -50
-                    to: 50
-                    value: 0
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_detune(value)
-                    }
-                }
-
-                TextField {
-                    id: detuneInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(detuneDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= detuneDial.from && parsedValue <= detuneDial.to) {
-                            detuneDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: detune
+                type: "Detune"
+                min: -50
+                max: 50
+                defaultValue: 0
+                mod: pyo.set_detune(parseInt(textValue))
             }
 
             // Pan
-            Column {
-                Label {
-                    text: "Pan"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: panDial
-                    from: -100
-                    to: 100
-                    value: 0
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_pan(value)
-                    }
-                }
-
-                TextField {
-                    id: panInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(panDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= panDial.from && parsedValue <= panDial.to) {
-                            panDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: pan
+                type: "Pan"
+                min: -100
+                max: 100
+                defaultValue: 0
+                mod: pyo.set_pan(parseInt(textValue))
             }
         }
 
@@ -174,159 +69,43 @@ ApplicationWindow {
             spacing: 10
 
             // Attack
-            Column {
-
-                Label {
-                    text: "Attack"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: attackDial
-                    from: 0
-                    to: 1000
-                    value: 10
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_ADSR("A", value)
-                    }
-                }
-
-                TextField {
-                    id: attackInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(attackDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= attackDial.from && parsedValue <= attackDial.to) {
-                            attackDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: attack
+                type: "Attack"
+                min: 0
+                max: 1000
+                defaultValue: 10
+                mod: pyo.set_ADSR("A", parseInt(textValue))
             }
 
             // Decay
-            Column {
-
-                Label {
-                    text: "Decay"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: decayDial
-                    from: 0
-                    to: 1000
-                    value: 50
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_ADSR("D", value)
-                    }
-                }
-
-                TextField {
-                    id: decayInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(decayDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= decayDial.from && parsedValue <= decayDial.to) {
-                            decayDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: decay
+                type: "Decay"
+                min: 0
+                max: 1000
+                defaultValue: 50
+                mod: pyo.set_ADSR("D", parseInt(textValue))
             }
 
             // Sustain
-            Column {
-
-                Label {
-                    text: "Sustain"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: sustainDial
-                    from: 0
-                    to: 100
-                    value: 50
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_ADSR("S", value)
-                    }
-                }
-
-                TextField {
-                    id: sustainInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(sustainDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= sustainDial.from && parsedValue <= sustainDial.to) {
-                            sustainDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: sustain
+                type: "Sustain"
+                min: 0
+                max: 100
+                defaultValue: 50
+                mod: pyo.set_ADSR("S", parseInt(textValue))
             }
 
             // Release
-            Column {
-
-                Label {
-                    text: "Release"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                Dial {
-                    id: releaseDial
-                    from: 0
-                    to: 5000
-                    value: 100
-                    stepSize: 1
-                    snapMode: Dial.SnapAlways
-                    inputMode: dialInputMode
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onMoved: {
-                        pyo.set_ADSR("R", value)
-                    }
-                }
-
-                TextField {
-                    id: releaseInput
-                    width: 60
-                    height: 30
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: Math.round(releaseDial.value).toString()
-                    onTextChanged: {
-                        var parsedValue = parseInt(text);
-                        if (!isNaN(parsedValue) && parsedValue >= releaseDial.from && parsedValue <= releaseDial.to) {
-                            releaseDial.value = parsedValue;
-                        }
-                    }
-                }
+            KnobGroup {
+                id: release
+                type: "Release"
+                min: 0
+                max: 5000
+                defaultValue: 100
+                mod: pyo.set_ADSR("R", parseInt(textValue))
             }
 
             // Waveform dropdown menu

@@ -1,9 +1,13 @@
-from PySide6.QtCore import QThread, Slot
+from PySide6.QtCore import Slot, QObject
+from PySide6.QtQml import QmlElement
 
 from pyo import *
+QML_IMPORT_NAME = "qtsynth.pyo"
+QML_IMPORT_MAJOR_VERSION = 1
 
 
-class PyoThread(QThread):
+@QmlElement
+class PyoThread(QObject):
     def __init__(self):
         super().__init__()
         self.s = Server(duplex=0)
@@ -48,7 +52,7 @@ class PyoThread(QThread):
 
     @Slot(int)
     def set_detune(self, value):
-        self.octave1.setTranspo(value * 0.02)
+        self.detune1.setTranspo(value * 0.02)
 
     @Slot(int)
     def set_pan(self, value):
