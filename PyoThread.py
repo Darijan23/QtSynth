@@ -12,20 +12,23 @@ class PyoThread(QObject):
         super().__init__()
         self.s = Server(duplex=0)
         self.s.setOutputDevice(pa_get_default_output())
+        self.s.setMidiInputDevice(99)
         self.s.boot()
-        self.s.start()
         self.s.amp = 1.
 
-        midi_devices = pm_get_input_devices()
+        # self.midi_names, self.midi_devices = pm_get_input_devices()
+        # print(self.midi_names, self.midi_devices)
 
-        # Sets fundamental frequency.
-        self.freq = 440.0
+        self.notes = Notein(scale=1)
+        self.notes.keyboard()
 
-        self.adsr1 = Adsr()
-        self.osc1 = Sine(freq=self.freq, mul=self.adsr1).mix(2)
+        self.adsr1 = MidiAdsr(self.notes["velocity"])
+        self.osc1 = Sine(freq=self.notes["pitch"], mul=self.adsr1).mix(2)
         self.octave1 = Harmonizer(self.osc1, transpo=0)
         self.detune1 = Harmonizer(self.octave1, transpo=0)
         self.pan = SPan(self.detune1, mul=1.).out()
+
+        self.s.start()
 
     @Slot()
     def play_note(self):
@@ -81,15 +84,15 @@ class PyoThread(QObject):
     @Slot(int)
     def set_osc(self, wave):
         if wave == 0:
-            self.osc1 = Sine(freq=self.freq, mul=self.adsr1)
+            self.osc1 = Sine(freq=self.notes["pitch"], mul=self.adsr1).mix(2)
         elif wave == 1:
-            self.osc1 = LFO(freq=self.freq, mul=self.adsr1, type=2)
+            self.osc1 = LFO(freq=self.notes["pitch"], mul=self.adsr1, type=2).mix(2)
         elif wave == 2:
-            self.osc1 = LFO(freq=self.freq, mul=self.adsr1, type=3)
+            self.osc1 = LFO(freq=self.notes["pitch"], mul=self.adsr1, type=3).mix(2)
         elif wave == 3:
-            self.osc1 = LFO(freq=self.freq, mul=self.adsr1, type=0)
+            self.osc1 = LFO(freq=self.notes["pitch"], mul=self.adsr1, type=0).mix(2)
         elif wave == 4:
-            self.osc1 = Noise(mul=self.adsr1)
+            self.osc1 = Noise(mul=self.adsr1).mix(2)
 
         self.octave1.setInput(self.osc1)
 

@@ -72,20 +72,6 @@ ApplicationWindow {
                 Layout.maximumHeight: 600
 
                 RowLayout {
-                    Layout.alignment: Qt.AlignBottom
-                    // Play button
-                    Button {
-                        text: "Play"
-                        onPressed: {
-                            pyo.play_note()
-                        }
-                        onReleased: {
-                            pyo.stop_note()
-                        }
-                    }
-                }
-
-                RowLayout {
                     Layout.alignment: Qt.AlignVCenter
 
                     // Waveform dropdown menu
@@ -124,8 +110,8 @@ ApplicationWindow {
                             height: 30
                             text: toggleState ? "On" : "Off"
                             onClicked: {
-                                toggleState = !toggleState
-                                pyo.toggle_osc()
+                                toggleState = !toggleState;
+                                pyo.toggle_osc();
                             }
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                         }
