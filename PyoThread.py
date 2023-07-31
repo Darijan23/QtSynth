@@ -26,20 +26,28 @@ class PyoThread(QObject):
         self.osc1 = Sine(freq=self.notes["pitch"], mul=self.adsr1).mix(2)
         self.octave1 = Harmonizer(self.osc1, transpo=0)
         self.detune1 = Harmonizer(self.octave1, transpo=0)
-        self.pan = SPan(self.detune1, mul=1.).out()
+        self.pan1 = SPan(self.detune1, mul=1.).out()
+
+        self.adsr2 = MidiAdsr(self.notes["velocity"])
+        self.osc2 = Sine(freq=self.notes["pitch"], mul=self.adsr2).mix(2)
+        self.octave2 = Harmonizer(self.osc2, transpo=0)
+        self.detune2 = Harmonizer(self.octave2, transpo=0)
+        self.pan2 = SPan(self.detune2, mul=1.).out()
 
         self.s.start()
 
     @Slot()
     def play_note(self):
         self.adsr1.play()
+        self.adsr2.play()
 
     @Slot()
     def stop_note(self):
         self.adsr1.stop()
+        self.adsr2.stop()
 
     @Slot(str, int)
-    def set_ADSR(self, param, value):
+    def set_ADSR1(self, param, value):
         if param == "A":
             self.adsr1.setAttack(value * 0.001)
         elif param == "D":
@@ -50,39 +58,39 @@ class PyoThread(QObject):
             self.adsr1.setRelease(value * 0.001)
 
     @Slot(int)
-    def set_A(self, value):
-        self.set_ADSR("A", value)
+    def set_A1(self, value):
+        self.set_ADSR1("A", value)
 
     @Slot(int)
-    def set_D(self, value):
-        self.set_ADSR("D", value)
+    def set_D1(self, value):
+        self.set_ADSR1("D", value)
 
     @Slot(int)
-    def set_S(self, value):
-        self.set_ADSR("S", value)
+    def set_S1(self, value):
+        self.set_ADSR1("S", value)
 
     @Slot(int)
-    def set_R(self, value):
-        self.set_ADSR("R", value)
+    def set_R1(self, value):
+        self.set_ADSR1("R", value)
 
     @Slot(int)
-    def set_octave(self, value):
+    def set_octave1(self, value):
         self.octave1.setTranspo(value * 12)
 
     @Slot(int)
-    def set_detune(self, value):
+    def set_detune1(self, value):
         self.detune1.setTranspo(value * 0.02)
 
     @Slot(int)
-    def set_pan(self, value):
-        self.pan.setPan(0.5 + (value * 0.005))
+    def set_pan1(self, value):
+        self.pan1.setPan(0.5 + (value * 0.005))
 
     @Slot(int)
-    def set_level(self, value):
+    def set_level1(self, value):
         self.adsr1.setMul(value * 0.01)
 
     @Slot(int)
-    def set_osc(self, wave):
+    def set_osc1(self, wave):
         if wave == 0:
             self.osc1 = Sine(freq=self.notes["pitch"], mul=self.adsr1).mix(2)
         elif wave == 1:
@@ -97,5 +105,67 @@ class PyoThread(QObject):
         self.octave1.setInput(self.osc1)
 
     @Slot()
-    def toggle_osc(self):
-        self.pan.setMul(1. - self.pan.mul)
+    def toggle_osc1(self):
+        self.pan1.setMul(1. - self.pan1.mul)
+
+    @Slot(str, int)
+    def set_ADSR2(self, param, value):
+        if param == "A":
+            self.adsr2.setAttack(value * 0.001)
+        elif param == "D":
+            self.adsr2.setDecay(value * 0.001)
+        elif param == "S":
+            self.adsr2.setSustain(value * 0.01)
+        elif param == "R":
+            self.adsr2.setRelease(value * 0.001)
+
+    @Slot(int)
+    def set_A2(self, value):
+        self.set_ADSR2("A", value)
+
+    @Slot(int)
+    def set_D2(self, value):
+        self.set_ADSR2("D", value)
+
+    @Slot(int)
+    def set_S2(self, value):
+        self.set_ADSR2("S", value)
+
+    @Slot(int)
+    def set_R2(self, value):
+        self.set_ADSR2("R", value)
+
+    @Slot(int)
+    def set_octave2(self, value):
+        self.octave2.setTranspo(value * 12)
+
+    @Slot(int)
+    def set_detune2(self, value):
+        self.detune2.setTranspo(value * 0.02)
+
+    @Slot(int)
+    def set_pan2(self, value):
+        self.pan2.setPan(0.5 + (value * 0.005))
+
+    @Slot(int)
+    def set_level2(self, value):
+        self.adsr2.setMul(value * 0.01)
+
+    @Slot(int)
+    def set_osc2(self, wave):
+        if wave == 0:
+            self.osc2 = Sine(freq=self.notes["pitch"], mul=self.adsr2).mix(2)
+        elif wave == 1:
+            self.osc2 = LFO(freq=self.notes["pitch"], mul=self.adsr2, type=2).mix(2)
+        elif wave == 2:
+            self.osc2 = LFO(freq=self.notes["pitch"], mul=self.adsr2, type=3).mix(2)
+        elif wave == 3:
+            self.osc2 = LFO(freq=self.notes["pitch"], mul=self.adsr2, type=0).mix(2)
+        elif wave == 4:
+            self.osc2 = Noise(mul=self.adsr2).mix(2)
+
+        self.octave2.setInput(self.osc2)
+
+    @Slot()
+    def toggle_osc2(self):
+        self.pan2.setMul(1. - self.pan2.mul)
