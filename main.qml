@@ -12,8 +12,6 @@ ApplicationWindow {
     title: qsTr("QtSynth")
 
     property int dialInputMode: Dial.Vertical
-    property bool toggleState1: true
-    property bool toggleState2: true
 
     PyoThread {
         id: pyo
