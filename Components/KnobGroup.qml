@@ -6,6 +6,7 @@ Item {
     property var mod: function() {}
     property int min: 0
     property int max: 100
+    property int step: 1
     property int defaultValue: 50
     property alias textValue: field.text
 
@@ -26,7 +27,7 @@ Item {
             from: min
             to: max
             value: defaultValue
-            stepSize: 1
+            stepSize: step
             snapMode: Dial.SnapAlways
             inputMode: dialInputMode
             anchors.horizontalCenter: parent.horizontalCenter

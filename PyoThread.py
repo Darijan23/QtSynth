@@ -19,6 +19,8 @@ class PyoThread(QObject):
         # self.midi_names, self.midi_devices = pm_get_input_devices()
         # print(self.midi_names, self.midi_devices)
 
+        self.bpm = 120
+
         self.notes = Notein(scale=1)
         self.notes.keyboard()
 
@@ -26,7 +28,7 @@ class PyoThread(QObject):
         self.osc1 = Sine(freq=self.notes["pitch"], mul=self.adsr1).mix(2)
         self.octave1 = Harmonizer(self.osc1, transpo=0)
         self.detune1 = Harmonizer(self.octave1, transpo=0)
-        self.pan1 = SPan(self.detune1, mul=1.).out()
+        self.pan1 = SPan(self.detune1, mul=1.)
 
         self.adsr2 = MidiAdsr(self.notes["velocity"])
         self.osc2 = Sine(freq=self.notes["pitch"], mul=self.adsr2).mix(2)
@@ -34,7 +36,16 @@ class PyoThread(QObject):
         self.detune2 = Harmonizer(self.octave2, transpo=0)
         self.pan2 = SPan(self.detune2, mul=1.).out()
 
+        # Creates an LFO oscillating +/- 500 around 1000 (filter's frequency)
+        self.lfo1 = Sine(freq=.1, mul=500, add=1000)
+        # Creates a dynamic bandpass filter applied to the noise source
+        self.filter1 = MoogLP(self.pan1, freq=self.lfo1).out()
+
         self.s.start()
+
+    @Slot(int)
+    def set_bpm(self, bpm):
+        self.bpm = bpm
 
     @Slot()
     def play_note(self):
@@ -169,3 +180,19 @@ class PyoThread(QObject):
     @Slot()
     def toggle_osc2(self):
         self.pan2.setMul(1. - self.pan2.mul)
+
+    @Slot(int)
+    def set_freq1(self, freq):
+        self.lfo1.setAdd(freq)
+
+    @Slot(int)
+    def set_filter_width1(self, width):
+        self.lfo1.setMul(width)
+
+    @Slot(int)
+    def set_Q1(self, q):
+        self.filter1.setQ(q)
+
+    @Slot(float)
+    def set_resonance1(self, res):
+        self.filter1.setRes(res)

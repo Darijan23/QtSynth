@@ -17,7 +17,7 @@ ApplicationWindow {
         id: pyo
     }
 
-    property var knobModel1: [
+    property var oscillatorModel1: [
         { type: "Octave", min: -2, max: 2, defaultValue: 0, mod: pyo.set_octave1 },
         { type: "Level", min: 0, max: 100, defaultValue: 100, mod: pyo.set_level1 },
         { type: "Detune", min: -50, max: 50, defaultValue: 0, mod: pyo.set_detune1 },
@@ -28,7 +28,7 @@ ApplicationWindow {
         { type: "Release", min: 0, max: 5000, defaultValue: 100, mod: pyo.set_R1 },
     ]
 
-    property var knobModel2: [
+    property var oscillatorModel2: [
         { type: "Octave", min: -2, max: 2, defaultValue: 0, mod: pyo.set_octave2 },
         { type: "Level", min: 0, max: 100, defaultValue: 100, mod: pyo.set_level2 },
         { type: "Detune", min: -50, max: 50, defaultValue: 0, mod: pyo.set_detune2 },
@@ -39,29 +39,91 @@ ApplicationWindow {
         { type: "Release", min: 0, max: 5000, defaultValue: 100, mod: pyo.set_R2 },
     ]
 
+    property var filterModel1: [
+        { type: "Frequency", min: 0, max: 20000, defaultValue: 1000, mod: pyo.set_freq1 },
+        { type: "Width", min: 0, max: 10000, defaultValue: 100, mod: pyo.set_filter_width1 },
+        // { type: "Q", min: 1, max: 500, defaultValue: 1, mod: pyo.set_Q1 },
+        { type: "Resonance", min: 0, max: 10, defaultValue: 0, mod: pyo.set_resonance1, step: 0.01 },
+    ]
+
+    property var filterModel2: [
+        { type: "Frequency", min: 0, max: 20000, defaultValue: 1000, mod: pyo.set_freq1 },
+        { type: "Width", min: 0, max: 10000, defaultValue: 100, mod: pyo.set_filter_width1 },
+        // { type: "Q", min: 1, max: 500, defaultValue: 1, mod: pyo.set_Q1 },
+        { type: "Resonance", min: 0, max: 10, defaultValue: 0, mod: pyo.set_resonance1, step: 0.01 },
+    ]
+
 
     ColumnLayout {
         anchors.fill: parent
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 5
-
-        Oscillator {
-            id: osc1
-            knobModel: knobModel1
-            oscFunc: pyo.set_osc1
-            toggleFunc: pyo.toggle_osc1
+        RowLayout {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+            Label {
+                text: "BPM"
+                width: 60
+                horizontalAlignment: Text.AlignHCenter
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            }
+
+            SpinBox {
+                id: bpm
+                width: 40
+                height: 30
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                value: 120
+                from: 1
+                to: 1000
+                onValueModified: pyo.set_bpm(value)
+            }
         }
 
-        Oscillator {
-            id: osc2
-            knobModel: knobModel2
-            oscFunc: pyo.set_osc2
-            toggleFunc: pyo.toggle_osc2
+        RowLayout {
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        }
 
+            ColumnLayout {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                Oscillator {
+                    id: osc1
+                    knobModel: oscillatorModel1
+                    oscFunc: pyo.set_osc1
+                    toggleFunc: pyo.toggle_osc1
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                }
+
+                Oscillator {
+                    id: osc2
+                    knobModel: oscillatorModel2
+                    oscFunc: pyo.set_osc2
+                    toggleFunc: pyo.toggle_osc2
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                }
+            }
+
+            ColumnLayout {
+                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                Filter {
+                    id: filter1
+                    knobModel: filterModel1
+                    lfoFunc: pyo.set_osc1
+                    toggleFunc: pyo.toggle_osc1
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                }
+
+                Filter {
+                    id: filter2
+                    knobModel: filterModel2
+                    lfoFunc: pyo.set_osc2
+                    toggleFunc: pyo.toggle_osc2
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                }
+            }
+        }
         RowLayout {
             Layout.alignment: Qt.AlignBottom
 
