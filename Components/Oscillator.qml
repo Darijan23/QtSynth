@@ -8,6 +8,8 @@ RowLayout {
     property var knobModel;
     property var oscFunc: function() {}
     property var toggleFunc: function() {}
+    property var waveformModel: ["Saw up", "Saw down", "Square", "Triangle", "Pulse", "Bipolar Pulse", "Sample and hold", "Sine"]
+    property var startIndex: 7
 
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -21,7 +23,7 @@ RowLayout {
             Layout.minimumHeight: 300
             Layout.preferredHeight: 300
             Layout.maximumWidth: 400
-            Layout.minimumWidth: 200
+            Layout.minimumWidth: 400
             Layout.preferredWidth: 400
             cellHeight: 150
             model: knobModel
@@ -36,16 +38,10 @@ RowLayout {
         }
     }
 
-    Item {
-        // spacer item
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-    }
-
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.preferredHeight: 200
-        Layout.maximumHeight: 600
+        Layout.maximumHeight: 200
 
         RowLayout {
             Layout.alignment: Qt.AlignVCenter
@@ -62,12 +58,11 @@ RowLayout {
                 ComboBox {
                     id: waveformComboBox
                     width: 100
-                    model: ["Sine", "Square", "Triangle", "Saw", "White noise"]
-                    currentIndex: 0
+                    model: waveformModel
+                    currentIndex: startIndex
                     Layout.alignment: Qt.AlignHCenter
                     onActivated: {
                         oscGroup.oscFunc(currentIndex);
-                        console.log(currentIndex);
                     }
                 }
             }

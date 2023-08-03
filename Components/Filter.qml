@@ -6,6 +6,7 @@ RowLayout {
     id: filterGroup
     property bool toggleFilter: true
     property var knobModel;
+    default property var dialStep: 1.0
     property var lfoFunc: function() {}
     property var toggleFunc: function() {}
 
@@ -17,11 +18,11 @@ RowLayout {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumHeight: 300
-            Layout.minimumHeight: 300
-            Layout.preferredHeight: 300
+            Layout.maximumHeight: 150
+            Layout.minimumHeight: 150
+            Layout.preferredHeight: 150
             Layout.maximumWidth: 400
-            Layout.minimumWidth: 200
+            Layout.minimumWidth: 400
             Layout.preferredWidth: 400
             cellHeight: 150
             model: knobModel
@@ -31,21 +32,16 @@ RowLayout {
                 min: element.min
                 max: element.max
                 defaultValue: element.defaultValue
+                step: element.dialStep
                 mod: element.mod(parseFloat(textValue))
             }
         }
     }
 
-    Item {
-        // spacer item
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-    }
-
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.preferredHeight: 200
-        Layout.maximumHeight: 600
+        Layout.preferredHeight: 150
+        Layout.maximumHeight: 150
 
         RowLayout {
             Layout.alignment: Qt.AlignVCenter
@@ -62,12 +58,11 @@ RowLayout {
                 ComboBox {
                     id: waveformComboBox
                     width: 100
-                    model: ["Sine", "Square", "Triangle", "Saw", "White noise"]
+                    model: ["Lowpass", "Highpass", "Bandpass", "Bandstop", "Allpass"]
                     currentIndex: 0
                     Layout.alignment: Qt.AlignHCenter
                     onActivated: {
                         filterGroup.lfoFunc(currentIndex);
-                        console.log(currentIndex);
                     }
                 }
             }
@@ -87,7 +82,7 @@ RowLayout {
                     height: 30
                     text: filterGroup.toggleFilter ? "On" : "Off"
                     onClicked: {
-                        filterGroup.togglefilter = !filterGroup.toggleFilter;
+                        filterGroup.toggleFilter = !filterGroup.toggleFilter;
                         filterGroup.toggleFunc();
                     }
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
