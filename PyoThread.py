@@ -1,5 +1,6 @@
-from PySide6.QtCore import Slot, QObject
+from PySide6.QtCore import Slot, QObject, QUrl
 from PySide6.QtQml import QmlElement
+from mido import MidiFile
 
 from pyo import *
 QML_IMPORT_NAME = "qtsynth.pyo"
@@ -15,9 +16,6 @@ class PyoThread(QObject):
         self.s.setMidiInputDevice(99)
         self.s.boot()
         self.s.amp = 1.
-
-        # self.midi_names, self.midi_devices = pm_get_input_devices()
-        # print(self.midi_names, self.midi_devices)
 
         self.bpm = 120
 
@@ -54,6 +52,8 @@ class PyoThread(QObject):
         self.lfo3 = Sine(freq=.1, mul=500, add=1000)
         self.filter3 = Biquad(self.pan3, freq=self.lfo3)
         self.osc3out = self.filter3.out()
+
+        self.midiFile = None
 
         self.s.start()
 
@@ -314,3 +314,13 @@ class PyoThread(QObject):
             self.osc3out = self.filter3.out()
         elif self.osc3out == self.filter3.out():
             self.osc3out = self.pan3.out()
+
+    @Slot(QUrl)
+    def set_midi_file(self, url):
+        self.midiFile = MidiFile(url.path())
+
+    @Slot()
+    def play_file(self):
+        for message in self.midiFile.play():
+            # Blokira
+            self.s.addMidiEvent(*message.bytes())

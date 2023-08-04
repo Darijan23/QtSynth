@@ -45,5 +45,14 @@ ApplicationWindow {
                 pyo: pyo
             }
         }
+        Item {
+            id: fxTab
+        }
+        Item {
+            id: midiTab
+            MidiTab {
+                pyo: pyo
+            }
+        }
     }
 }
