@@ -22,7 +22,7 @@ class PyoThread(QObject):
         self.bpm = 120
 
         self.notes = Notein(scale=1)
-        self.noise_notes = Notein(scale=1, poly=1)
+        self.noise_notes = Notein(scale=1, poly=10)
 
         self.adsr1 = MidiAdsr(self.notes["velocity"])
         self.osc1 = LFO(freq=self.notes["pitch"], sharp=0, mul=self.adsr1)
@@ -38,7 +38,7 @@ class PyoThread(QObject):
         self.detune2 = Harmonizer(self.octave2, transpo=0)
         self.pan2 = SPan(self.detune2, mul=1.)
 
-        self.adsr3 = MidiAdsr(self.notes["velocity"])
+        self.adsr3 = MidiAdsr(self.noise_notes["velocity"])
         self.osc3 = Noise(mul=self.adsr3)
         self.osc3mix = self.osc3.mix(2)
         self.pan3 = SPan(self.osc3mix, mul=1.)

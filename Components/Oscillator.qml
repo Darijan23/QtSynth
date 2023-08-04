@@ -3,13 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 RowLayout {
-    id: oscGroup
     property bool toggleOsc: true
     property var knobModel;
     property var oscFunc: function() {}
     property var toggleFunc: function() {}
     property var waveformModel: ["Saw up", "Saw down", "Square", "Triangle", "Pulse", "Bipolar Pulse", "Sample and hold", "Sine"]
-    property var startIndex: 7
+    property var waveIndex: 7
 
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -59,10 +58,17 @@ RowLayout {
                     id: waveformComboBox
                     width: 100
                     model: waveformModel
-                    currentIndex: startIndex
+                    currentIndex: waveIndex
                     Layout.alignment: Qt.AlignHCenter
                     onActivated: {
-                        oscGroup.oscFunc(currentIndex);
+                        oscFunc(currentIndex);
+
+                        // Debug
+                        for(var child in adsr.contentItem.children) {
+                            console.log(child)
+                            console.log(adsr.contentItem.children[child].type)
+                            console.log(adsr.contentItem.children[child].textValue)
+                        }
                     }
                 }
             }
@@ -83,7 +89,7 @@ RowLayout {
                     text: toggleOsc ? "On" : "Off"
                     onClicked: {
                         toggleOsc = !toggleOsc;
-                        oscGroup.toggleFunc();
+                        toggleFunc();
                     }
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 }
