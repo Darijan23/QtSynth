@@ -225,6 +225,7 @@ ApplicationWindow {
         Item {
             id: midiTab
             property alias midiFile: midiFileDialog.selectedFile
+            property bool playing: false
 
             RowLayout {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -253,8 +254,11 @@ ApplicationWindow {
 
                 Button {
                     id: playButton
-                    text: "Play"
-                    onClicked: pyo.play_file()
+                    text: midiTab.playing ? "Pause" : "Play"
+                    onClicked: {
+                        midiTab.playing = !midiTab.playing;
+                        pyo.toggle_playback()
+                    }
                 }
             }
         }
