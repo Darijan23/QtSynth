@@ -4,11 +4,11 @@ import QtQuick.Layouts
 
 RowLayout {
     property bool toggleOsc: true
+    property var pyo;
     property var knobModel;
-    property var oscFunc: function() {}
-    property var toggleFunc: function() {}
     property var waveformModel: ["Saw up", "Saw down", "Square", "Triangle", "Pulse", "Bipolar Pulse", "Sample and hold", "Sine"]
     property var waveIndex: 7
+    property int oscIndex;
 
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -61,7 +61,7 @@ RowLayout {
                     currentIndex: waveIndex
                     Layout.alignment: Qt.AlignHCenter
                     onActivated: {
-                        oscFunc(currentIndex);
+                        pyo.set_oscillator(oscIndex, currentIndex);
 
                         // Debug
                         for(var child in adsr.contentItem.children) {
@@ -89,7 +89,7 @@ RowLayout {
                     text: toggleOsc ? "On" : "Off"
                     onClicked: {
                         toggleOsc = !toggleOsc;
-                        toggleFunc();
+                        pyo.toggle_oscillator(oscIndex);
                     }
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 }

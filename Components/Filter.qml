@@ -5,10 +5,11 @@ import QtQuick.Layouts
 RowLayout {
     id: filterGroup
     property bool toggleFilter: true
+    property var pyo;
     property var knobModel;
+    property int filterIndex;
+    property var mixFunc: function() {}
     default property var dialStep: 1.0
-    property var lfoFunc: function() {}
-    property var toggleFunc: function() {}
 
     ColumnLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -62,31 +63,16 @@ RowLayout {
                     currentIndex: 0
                     Layout.alignment: Qt.AlignHCenter
                     onActivated: {
-                        filterGroup.lfoFunc(currentIndex);
+                        pyo.set_filter(filterIndex, currentIndex);
                     }
                 }
             }
 
-            // Toggle button
-            ColumnLayout {
-                Label {
-                    text: "Toggle"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                }
-
-                Button {
-                    id: toggleButton1
-                    width: 60
-                    height: 30
-                    text: filterGroup.toggleFilter ? "On" : "Off"
-                    onClicked: {
-                        filterGroup.toggleFilter = !filterGroup.toggleFilter;
-                        filterGroup.toggleFunc();
-                    }
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                }
+            KnobGroup {
+                type: "Mix"
+                mod: pyo.filter_mix(filterIndex, parseFloat(textValue))
+                defaultValue: 100
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             }
         }
     }

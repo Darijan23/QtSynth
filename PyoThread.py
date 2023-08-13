@@ -1,8 +1,10 @@
 from PySide6.QtCore import Slot, QObject, QUrl
 from PySide6.QtQml import QmlElement
 from mido import MidiFile
-
 from pyo import *
+
+from PlaybackThread import PlaybackThread
+
 QML_IMPORT_NAME = "qtsynth.pyo"
 QML_IMPORT_MAJOR_VERSION = 1
 
@@ -43,17 +45,22 @@ class PyoThread(QObject):
 
         self.lfo1 = Sine(freq=.1, mul=500, add=1000)
         self.filter1 = Biquad(self.pan1, freq=self.lfo1)
-        self.osc1out = self.filter1.out()
+        self.osc1out = Selector(inputs=[self.pan1, self.filter1], voice=1.).out()
 
         self.lfo2 = Sine(freq=.1, mul=500, add=1000)
         self.filter2 = Biquad(self.pan2, freq=self.lfo2)
-        self.osc2out = self.filter2.out()
+        self.osc2out = Selector(inputs=[self.pan2, self.filter2], voice=1.).out()
 
         self.lfo3 = Sine(freq=.1, mul=500, add=1000)
         self.filter3 = Biquad(self.pan3, freq=self.lfo3)
-        self.osc3out = self.filter3.out()
+        self.osc3out = Selector(inputs=[self.pan3, self.filter3], voice=1.).out()
 
         self.midiFile = None
+        self.playback_thread = PlaybackThread(self.s, self.midiFile)
+
+        self.f1_toggle = True
+        self.f2_toggle = True
+        self.f3_toggle = True
 
         self.s.start()
 
@@ -248,10 +255,13 @@ class PyoThread(QObject):
 
     @Slot()
     def toggle_filter1(self):
-        if self.osc1out == self.pan1.out():
-            self.osc1out = self.filter1.out()
-        elif self.osc1out == self.filter1.out():
+        if self.f1_toggle:
+            del self.osc1out
             self.osc1out = self.pan1.out()
+        else:
+            del self.osc1out
+            self.osc1out = self.filter1.out()
+        self.f1_toggle = not self.f1_toggle
 
     @Slot(int)
     def set_freq2(self, freq):
@@ -279,10 +289,13 @@ class PyoThread(QObject):
 
     @Slot()
     def toggle_filter2(self):
-        if self.osc2out == self.pan2.out():
-            self.osc2out = self.filter2.out()
-        elif self.osc2out == self.filter2.out():
+        if self.f2_toggle:
+            del self.osc2out
             self.osc2out = self.pan2.out()
+        else:
+            del self.osc2out
+            self.osc2out = self.filter2.out()
+        self.f2_toggle = not self.f2_toggle
 
     @Slot(int)
     def set_freq3(self, freq):
@@ -310,17 +323,58 @@ class PyoThread(QObject):
 
     @Slot()
     def toggle_filter3(self):
-        if self.osc3out == self.pan3.out():
-            self.osc3out = self.filter3.out()
-        elif self.osc3out == self.filter3.out():
+        if self.f3_toggle:
+            # self.filter3.stop()
             self.osc3out = self.pan3.out()
+        else:
+            # self.osc3out.stop()
+            self.osc3out = self.filter3.out()
+        self.f3_toggle = not self.f3_toggle
+
+    @Slot(float)
+    def filter1_mix(self, mix):
+        self.osc1out.setVoice(mix * .01)
+
+    @Slot(float)
+    def filter2_mix(self, mix):
+        self.osc2out.setVoice(mix * .01)
+
+    @Slot(float)
+    def filter3_mix(self, mix):
+        self.osc3out.setVoice(mix * .01)
+
+    @Slot(int, float)
+    def filter_mix(self, ind, mix):
+        mix_functions = [self.filter1_mix, self.filter2_mix, self.filter3_mix]
+        mix_functions[ind](mix)
+
+    @Slot(int)
+    def toggle_oscillator(self, ind):
+        toggle_functions = [self.toggle_osc1, self.toggle_osc2, self.toggle_osc3]
+        toggle_functions[ind]()
+
+    @Slot(int, int)
+    def set_oscillator(self, ind, wave):
+        set_functions = [self.set_osc1, self.set_osc2, self.set_osc3]
+        set_functions[ind](wave)
+
+    @Slot(int)
+    def toggle_filter(self, ind):
+        toggle_functions = [self.toggle_filter1, self.toggle_filter2, self.toggle_filter3]
+        toggle_functions[ind]()
+
+    @Slot(int, int)
+    def set_filter(self, ind, shape):
+        set_functions = [self.set_filter1, self.set_filter2, self.set_filter3]
+        set_functions[ind](shape)
 
     @Slot(QUrl)
     def set_midi_file(self, url):
         self.midiFile = MidiFile(url.path())
+        self.playback_thread.file = self.midiFile
+        if not self.playback_thread.isRunning():
+            self.playback_thread.run()
 
     @Slot()
     def play_file(self):
-        for message in self.midiFile.play():
-            # Blokira
-            self.s.addMidiEvent(*message.bytes())
+        self.playback_thread.play()
