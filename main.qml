@@ -70,9 +70,36 @@ ApplicationWindow {
         id: pyo
     }
 
+    RowLayout {
+        id: bpmRow
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+        Label {
+            text: "BPM"
+            width: 60
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+        }
+
+        SpinBox {
+            id: bpm
+            width: 40
+            height: 30
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            value: 120
+            from: 1
+            to: 1000
+            onValueModified: pyo.set_bpm(value)
+        }
+    }
+
+
     TabBar {
         id: bar
+        anchors.top: bpmRow.bottom
+        anchors.left: parent.left
         width: parent.width
+
         TabButton {
             text: "Oscillators"
         }
@@ -96,28 +123,6 @@ ApplicationWindow {
             id: oscillatorTab
             ColumnLayout {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                RowLayout {
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                    Label {
-                        text: "BPM"
-                        width: 60
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                    }
-
-                    SpinBox {
-                        id: bpm
-                        width: 40
-                        height: 30
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                        value: 120
-                        from: 1
-                        to: 1000
-                        onValueModified: pyo.set_bpm(value)
-                    }
-                }
 
                 RowLayout {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -248,7 +253,7 @@ ApplicationWindow {
                     fileMode: FileDialog.OpenFile
                     nameFilters: ["MIDI files (*.mid)", "Any (*)"]
                     onAccepted: {
-                        pyo.set_midi_file(midiFile);
+                        pyo.set_midi_file(selectedFile);
                     }
                 }
 

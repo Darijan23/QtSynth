@@ -57,6 +57,7 @@ class PyoThread(QObject):
 
         self.midiFile = None
         self.playback_thread = PlaybackThread(self.s, self.midiFile)
+        self.playback_thread.start()
 
         self.f1_toggle = True
         self.f2_toggle = True
@@ -370,10 +371,12 @@ class PyoThread(QObject):
 
     @Slot(QUrl)
     def set_midi_file(self, url):
+        print("dingus")
         self.midiFile = MidiFile(url.path())
         self.playback_thread.file = self.midiFile
+        self.playback_thread.init_file()
         if not self.playback_thread.isRunning():
-            self.playback_thread.run()
+            self.playback_thread.start()
 
     @Slot()
     def toggle_playback(self):
