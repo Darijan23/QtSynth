@@ -381,8 +381,11 @@ class PyoThread(QObject):
     @Slot()
     def toggle_playback(self):
         if self.playback_thread.play:
-            print("Pause")
             self.playback_thread.pause()
         else:
-            print("Play")
             self.playback_thread.start_playback()
+
+    @Slot()
+    def stop_playback(self):
+        self.playback_thread.stop_playback()
+

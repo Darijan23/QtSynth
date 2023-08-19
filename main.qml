@@ -230,6 +230,7 @@ ApplicationWindow {
         Item {
             id: midiTab
             property alias midiFile: midiFileDialog.selectedFile
+            property bool fileLoaded: false
             property bool playing: false
 
             RowLayout {
@@ -254,15 +255,27 @@ ApplicationWindow {
                     nameFilters: ["MIDI files (*.mid)", "Any (*)"]
                     onAccepted: {
                         pyo.set_midi_file(selectedFile);
+                        midiTab.fileLoaded = true;
                     }
                 }
 
                 Button {
                     id: playButton
                     text: midiTab.playing ? "Pause" : "Play"
+                    enabled: midiTab.fileLoaded
                     onClicked: {
                         midiTab.playing = !midiTab.playing;
                         pyo.toggle_playback()
+                    }
+                }
+
+                Button {
+                    id: stopButton
+                    text: "Stop"
+                    enabled: midiTab.fileLoaded
+                    onClicked: {
+                        midiTab.playing = false;
+                        pyo.stop_playback()
                     }
                 }
             }
