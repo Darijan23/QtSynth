@@ -7,64 +7,76 @@ import qtsynth.pyo 1
 import "Components"
 
 ApplicationWindow {
-    width: 1280
-    height: 1080
+    width: 1400
+    height: 960
     visible: true
     title: qsTr("QtSynth")
 
     property int dialInputMode: Dial.Vertical
 
-    property var oscillatorModel1: [
-        { type: "Octave", min: -2, max: 2, defaultValue: 0, mod: pyo.set_octave1 },
-        { type: "Level", min: 0, max: 100, defaultValue: 100, mod: pyo.set_level1 },
-        { type: "Detune", min: -50, max: 50, defaultValue: 0, mod: pyo.set_detune1 },
-        { type: "Pan", min: -100, max: 100, defaultValue: 0, mod: pyo.set_pan1 },
-        { type: "Attack", min: 0, max: 1000, defaultValue: 10, mod: pyo.set_A1 },
-        { type: "Decay", min: 0, max: 1000, defaultValue: 50, mod: pyo.set_D1 },
-        { type: "Sustain", min: 0, max: 100, defaultValue: 50, mod: pyo.set_S1 },
-        { type: "Release", min: 0, max: 5000, defaultValue: 100, mod: pyo.set_R1 },
-    ]
+    ObjectModel {
+        id: oscillatorModel1
+        
+        KnobGroup { id: octave1; type: "Octave"; min: -2; max: 2; defaultValue: 0; mod: pyo.set_octave1(parseFloat(textValue)) }
+        KnobGroup { id: level1; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level1(parseFloat(textValue)) }
+        KnobGroup { id: detune1; type: "Detune"; min: -50; max: 50; defaultValue: 0; mod: pyo.set_detune1(parseFloat(textValue)) }
+        KnobGroup { id: pan1; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan1(parseFloat(textValue)) }
+        KnobGroup { id: attack1; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A1(parseFloat(textValue)) }
+        KnobGroup { id: decay; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D1(parseFloat(textValue)) }
+        KnobGroup { id: sustain1; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S1(parseFloat(textValue)) }
+        KnobGroup { id: release1; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R1(parseFloat(textValue)) }
+    }
 
-    property var oscillatorModel2: [
-        { type: "Octave", min: -2, max: 2, defaultValue: 0, mod: pyo.set_octave2 },
-        { type: "Level", min: 0, max: 100, defaultValue: 100, mod: pyo.set_level2 },
-        { type: "Detune", min: -50, max: 50, defaultValue: 0, mod: pyo.set_detune2 },
-        { type: "Pan", min: -100, max: 100, defaultValue: 0, mod: pyo.set_pan2 },
-        { type: "Attack", min: 0, max: 1000, defaultValue: 10, mod: pyo.set_A2 },
-        { type: "Decay", min: 0, max: 1000, defaultValue: 50, mod: pyo.set_D2 },
-        { type: "Sustain", min: 0, max: 100, defaultValue: 50, mod: pyo.set_S2 },
-        { type: "Release", min: 0, max: 5000, defaultValue: 100, mod: pyo.set_R2 },
-    ]
+    ObjectModel {
+        id: oscillatorModel2
 
-    property var oscillatorModel3: [
-        { type: "Attack", min: 0, max: 1000, defaultValue: 10, mod: pyo.set_A3 },
-        { type: "Decay", min: 0, max: 1000, defaultValue: 50, mod: pyo.set_D3 },
-        { type: "Sustain", min: 0, max: 100, defaultValue: 50, mod: pyo.set_S3 },
-        { type: "Release", min: 0, max: 5000, defaultValue: 100, mod: pyo.set_R3 },
-        { type: "Level", min: 0, max: 100, defaultValue: 100, mod: pyo.set_level3 },
-        { type: "Pan", min: -100, max: 100, defaultValue: 0, mod: pyo.set_pan3 },
-    ]
+        KnobGroup { id: octave2; type: "Octave"; min: -2; max: 2; defaultValue: 0; mod: pyo.set_octave2(parseFloat(textValue)) }
+        KnobGroup { id: level2; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level2(parseFloat(textValue)) }
+        KnobGroup { id: detune2; type: "Detune"; min: -50; max: 50; defaultValue: 0; mod: pyo.set_detune2(parseFloat(textValue)) }
+        KnobGroup { id: pan2; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan2(parseFloat(textValue)) }
+        KnobGroup { id: attack2; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A2(parseFloat(textValue)) }
+        KnobGroup { id: decay2; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D2(parseFloat(textValue)) }
+        KnobGroup { id: sustain2; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S2(parseFloat(textValue)) }
+        KnobGroup { id: release2; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R2(parseFloat(textValue)) }
+    }
 
-    property var filterModel1: [
-        { type: "Rate", min: 0, max: 20, defaultValue: 1, mod: pyo.set_filter_rate1, dialStep: 0.01 },
-        { type: "Frequency", min: 0, max: 20000, defaultValue: 1000, mod: pyo.set_freq1 },
-        { type: "Width", min: 0, max: 10000, defaultValue: 100, mod: pyo.set_filter_width1 },
-        { type: "Q", min: 1, max: 10, defaultValue: 1, mod: pyo.set_Q1 },
-    ]
+    ObjectModel {
+        id: oscillatorModel3
 
-    property var filterModel2: [
-        { type: "Rate", min: 0, max: 20, defaultValue: 1, mod: pyo.set_filter_rate2, dialStep: 0.01 },
-        { type: "Frequency", min: 0, max: 20000, defaultValue: 1000, mod: pyo.set_freq2 },
-        { type: "Width", min: 0, max: 10000, defaultValue: 100, mod: pyo.set_filter_width2 },
-        { type: "Q", min: 1, max: 10, defaultValue: 1, mod: pyo.set_Q2, dialStep: 0.01 },
-    ]
+        KnobGroup { id: attack3; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A3(parseFloat(textValue)) }
+        KnobGroup { id: decay3; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D3(parseFloat(textValue)) }
+        KnobGroup { id: sustain3; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S3(parseFloat(textValue)) }
+        KnobGroup { id: release3; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R3(parseFloat(textValue)) }
+        KnobGroup { id: level3; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level3(parseFloat(textValue)) }
+        KnobGroup { id: pan3; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan3(parseFloat(textValue)) }
+    }
 
-    property var filterModel3: [
-        { type: "Rate", min: 0, max: 20, defaultValue: 1, mod: pyo.set_filter_rate3, dialStep: 0.01 },
-        { type: "Frequency", min: 0, max: 20000, defaultValue: 1000, mod: pyo.set_freq3 },
-        { type: "Width", min: 0, max: 10000, defaultValue: 100, mod: pyo.set_filter_width3 },
-        { type: "Q", min: 1, max: 10, defaultValue: 1, mod: pyo.set_Q3, dialStep: 0.01 },
-    ]
+    ObjectModel {
+        id: filterModel1
+
+        KnobGroup { id: rate1; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate1(parseFloat(textValue)); step: 0.01 }
+        KnobGroup { id: freq1; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq1(parseFloat(textValue)) }
+        KnobGroup { id: width1; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width1(parseFloat(textValue)) }
+        KnobGroup { id: q1; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q1(parseFloat(textValue)) }
+    }
+
+    ObjectModel {
+        id: filterModel2
+
+        KnobGroup { id: rate2; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate2(parseFloat(textValue)); step: 0.01 }
+        KnobGroup { id: freq2; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq2(parseFloat(textValue)) }
+        KnobGroup { id: width2; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width2(parseFloat(textValue)) }
+        KnobGroup { id: q2; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q2(parseFloat(textValue)); step: 0.01 }
+    }
+
+    ObjectModel {
+        id: filterModel3
+
+        KnobGroup { id: rate3; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate3(parseFloat(textValue)); step: 0.01 }
+        KnobGroup { id: freq3; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq3(parseFloat(textValue)) }
+        KnobGroup { id: width3; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width3(parseFloat(textValue)) }
+        KnobGroup { id: q3; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q3(parseFloat(textValue)); step: 0.01 }
+    }
 
     PyoThread {
         id: pyo
@@ -75,6 +87,7 @@ ApplicationWindow {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
         Label {
+            Layout.leftMargin: 10
             text: "BPM"
             width: 60
             horizontalAlignment: Text.AlignHCenter
@@ -130,64 +143,92 @@ ApplicationWindow {
                     ColumnLayout {
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-                        Oscillator {
-                            id: osc1
-                            pyo: pyo
-                            knobModel: oscillatorModel1
-                            oscIndex: 0
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        }
-
-                        Oscillator {
-                            id: osc2
-                            pyo: pyo
-                            knobModel: oscillatorModel2
-                            oscIndex: 1
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        }
-
-                        Oscillator {
-                            id: osc3
-                            pyo: pyo
-                            knobModel: oscillatorModel3
-                            waveformModel: ["White noise", "Pink noise", "Brown noise"]
-                            waveIndex: 0
-                            oscIndex: 2
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                        }
-                    }
-
-                    Item {
-                        // spacer item
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                    }
+                        Layout.minimumWidth: 1000
+                        Layout.preferredWidth: 1200
 
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                        Filter {
-                            id: filter1
-                            pyo: pyo
-                            knobModel: filterModel1
-                            filterIndex: 0
+                        RowLayout {
                             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                            Oscillator {
+                                id: osc1
+                                pyo: pyo
+                                type: "Oscillator 1"
+                                knobModel: oscillatorModel1
+                                oscIndex: 0
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            }
+
+                            Item {
+                                // spacer item
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            Filter {
+                                id: filter1
+                                pyo: pyo
+                                knobModel: filterModel1
+                                filterIndex: 0
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            }
                         }
 
-                        Filter {
-                            id: filter2
-                            pyo: pyo
-                            knobModel: filterModel2
-                            filterIndex: 1
+                        RowLayout {
                             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                            Oscillator {
+                                id: osc2
+                                pyo: pyo
+                                type: "Oscillator 2"
+                                knobModel: oscillatorModel2
+                                oscIndex: 1
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                                Layout.fillWidth: true
+                            }
+
+                            Item {
+                                // spacer item
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            Filter {
+                                id: filter2
+                                pyo: pyo
+                                knobModel: filterModel2
+                                filterIndex: 1
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                Layout.fillWidth: true
+                            }
                         }
 
-                        Filter {
-                            id: filter3
-                            pyo: pyo
-                            knobModel: filterModel3
-                            filterIndex: 2
+                        RowLayout {
                             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+
+                            Oscillator {
+                                id: osc3
+                                pyo: pyo
+                                type: "Noise oscillator"
+                                knobModel: oscillatorModel3
+                                oscIndex: 2
+                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            }
+
+                            Item {
+                                // spacer item
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                            }
+
+                            Filter {
+                                id: filter3
+                                pyo: pyo
+                                knobModel: filterModel3
+                                filterIndex: 2
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            }
                         }
                     }
                 }
@@ -232,6 +273,7 @@ ApplicationWindow {
             property alias midiFile: midiFileDialog.selectedFile
             property bool fileLoaded: false
             property bool playing: false
+            property bool stopped: true
 
             RowLayout {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -265,6 +307,7 @@ ApplicationWindow {
                     enabled: midiTab.fileLoaded
                     onClicked: {
                         midiTab.playing = !midiTab.playing;
+                        midiTab.stopped = false
                         pyo.toggle_playback()
                     }
                 }
@@ -272,10 +315,24 @@ ApplicationWindow {
                 Button {
                     id: stopButton
                     text: "Stop"
-                    enabled: midiTab.fileLoaded
+                    enabled: !midiTab.stopped
                     onClicked: {
                         midiTab.playing = false;
+                        midiTab.stopped = true
                         pyo.stop_playback()
+                    }
+                }
+
+                Button {
+                    id: ajmoProbat
+                    text: pyo.test_counter
+                    onClicked: {
+                        console.log(filter3.knobModel);
+                        console.log(freq3);
+                        console.log(freq3.textValue)
+                        console.log(pyo.test_counter);
+                        pyo.test_counter = pyo.test_counter + 1;
+                        freq3.textValue = 2000;
                     }
                 }
             }

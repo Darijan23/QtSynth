@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-RowLayout {
+ColumnLayout {
+    id: oscGroup
+    property string type: "Oscillator"
     property bool toggleOsc: true
     property var pyo;
     property var knobModel;
@@ -10,88 +12,86 @@ RowLayout {
     property var waveIndex: 7
     property int oscIndex;
 
-    ColumnLayout {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+    spacing: 20
 
-        GridView {
-            id: adsr
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.maximumHeight: 300
-            Layout.minimumHeight: 300
-            Layout.preferredHeight: 300
-            Layout.maximumWidth: 400
-            Layout.minimumWidth: 400
-            Layout.preferredWidth: 400
-            cellHeight: 150
-            model: knobModel
-            delegate: KnobGroup {
-                property var element: knobModel[model.index]
-                type: element.type
-                min: element.min
-                max: element.max
-                defaultValue: element.defaultValue
-                mod: element.mod(parseInt(textValue))
-            }
-        }
+    Label {
+        text: type
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignLeft
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
     }
 
-    ColumnLayout {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.preferredHeight: 200
-        Layout.maximumHeight: 200
+    RowLayout {
+        ColumnLayout {
+            Layout.alignment: Qt.AlignRight | Qt.AlignTop
 
-        RowLayout {
-            Layout.alignment: Qt.AlignVCenter
+            GridView {
+                id: adsr
+                Layout.alignment: Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumHeight: 240
+                Layout.minimumHeight: 240
+                Layout.preferredHeight: 240
+                Layout.maximumWidth: 400
+                Layout.minimumWidth: 400
+                Layout.preferredWidth: 400
+                cellHeight: 120
+                model: knobModel
+            }
+        }
 
-            // Waveform dropdown menu
-            ColumnLayout {
-                Label {
-                    text: "Waveform"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignVCenter
-                }
+        ColumnLayout {
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.preferredHeight: 240
+            Layout.maximumHeight: 240
 
-                ComboBox {
-                    id: waveformComboBox
-                    width: 100
-                    model: waveformModel
-                    currentIndex: waveIndex
-                    Layout.alignment: Qt.AlignHCenter
-                    onActivated: {
-                        pyo.set_oscillator(oscIndex, currentIndex);
+            RowLayout {
+                Layout.alignment: Qt.AlignVCenter
 
-                        // Debug
-                        for(var child in adsr.contentItem.children) {
-                            console.log(child)
-                            console.log(adsr.contentItem.children[child].type)
-                            console.log(adsr.contentItem.children[child].textValue)
+                // Waveform dropdown menu
+                ColumnLayout {
+                    Label {
+                        text: "Waveform"
+                        width: 60
+                        horizontalAlignment: Text.AlignHCenter
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+
+                    ComboBox {
+                        id: waveformComboBox
+                        width: 100
+                        model: waveformModel
+                        currentIndex: waveIndex
+                        Layout.alignment: Qt.AlignHCenter
+                        onActivated: {
+                            pyo.set_oscillator(oscIndex, currentIndex);
                         }
                     }
                 }
-            }
 
-            // Toggle button
-            ColumnLayout {
-                Label {
-                    text: "Toggle"
-                    width: 60
-                    horizontalAlignment: Text.AlignHCenter
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                }
+                // Toggle button
+                ColumnLayout {
+                    Layout.alignment: Qt.AlignVCenter
 
-                Button {
-                    id: toggleButton1
-                    width: 60
-                    height: 30
-                    text: toggleOsc ? "On" : "Off"
-                    onClicked: {
-                        toggleOsc = !toggleOsc;
-                        pyo.toggle_oscillator(oscIndex);
+                    Label {
+                        text: "Toggle"
+                        width: 60
+                        horizontalAlignment: Text.AlignHCenter
+                        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                     }
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+
+                    Button {
+                        id: toggleButton1
+                        width: 60
+                        height: 30
+                        text: toggleOsc ? "On" : "Off"
+                        onClicked: {
+                            toggleOsc = !toggleOsc;
+                            pyo.toggle_oscillator(oscIndex);
+                        }
+                        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                    }
                 }
             }
         }

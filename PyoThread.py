@@ -1,4 +1,6 @@
-from PySide6.QtCore import Slot, QObject, QUrl
+import sys
+
+from PySide6.QtCore import Slot, QObject, QUrl, Property, Signal
 from PySide6.QtQml import QmlElement
 from mido import MidiFile
 from pyo import *
@@ -11,6 +13,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class PyoThread(QObject):
+    counter_changed = Signal(int)
+
     def __init__(self):
         super().__init__()
         self.s = Server(duplex=0)
@@ -63,7 +67,18 @@ class PyoThread(QObject):
         self.f2_toggle = True
         self.f3_toggle = True
 
+        self._test_counter = 0
+
         self.s.start()
+
+    @Property(int, notify=counter_changed)
+    def test_counter(self):
+        return self._test_counter
+
+    @test_counter.setter
+    def test_counter(self, value):
+        if value != self._test_counter:
+            self._test_counter = value
 
     @Slot(int)
     def set_bpm(self, bpm):
@@ -388,4 +403,3 @@ class PyoThread(QObject):
     @Slot()
     def stop_playback(self):
         self.playback_thread.stop_playback()
-

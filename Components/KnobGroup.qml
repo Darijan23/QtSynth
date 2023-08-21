@@ -8,9 +8,10 @@ Item {
     property int max: 100
     default property var step: 1.0
     property int defaultValue: 50
-    property alias textValue: field.text
+    property alias textValue: dial.value
 
     Column {
+        anchors.top: parent.top
         Label {
             id: label
             text: type
@@ -21,7 +22,7 @@ Item {
 
         Dial {
             id: dial
-            height: 75
+            height: 60
             width: height
             spacing: 0
             from: min
@@ -35,17 +36,11 @@ Item {
 
         TextField {
             id: field
-            width: 60
-            height: 30
+            width: 50
+            height: 20
             anchors.horizontalCenter: parent.horizontalCenter
-            text: dial.value.toFixed(Math.ceil(Math.log10(1.0 / step)))
+            text: textValue.toFixed(Math.ceil(Math.log10(1.0 / step)))
             horizontalAlignment: TextInput.AlignRight
-
-            Binding {
-                target: dial
-                property: "value"
-                value: parseFloat(field.text)
-            }
 
             onTextChanged: mod
         }

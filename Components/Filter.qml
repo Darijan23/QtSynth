@@ -2,53 +2,53 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-RowLayout {
+ColumnLayout {
     id: filterGroup
+    property string type: "Filter"
     property bool toggleFilter: true
     property var pyo;
-    property var knobModel;
+    property alias knobModel: filter.model
     property int filterIndex;
     property var mixFunc: function() {}
     default property var dialStep: 1.0
 
-    ColumnLayout {
+    spacing: 20
+
+    Label {
+        text: type
+        font.pixelSize: 18
+        horizontalAlignment: Text.AlignLeft
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+    }
+
+    RowLayout {
+        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+        spacing: 10
 
         GridView {
             id: filter
-            Layout.alignment: Qt.AlignTop
+            Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.maximumHeight: 150
-            Layout.minimumHeight: 150
-            Layout.preferredHeight: 150
+            Layout.maximumHeight: 120
+            Layout.minimumHeight: 120
+            Layout.preferredHeight: 120
             Layout.maximumWidth: 400
             Layout.minimumWidth: 400
             Layout.preferredWidth: 400
-            cellHeight: 150
+            cellHeight: 120
             model: knobModel
-            delegate: KnobGroup {
-                property var element: knobModel[model.index]
-                type: element.type
-                min: element.min
-                max: element.max
-                defaultValue: element.defaultValue
-                step: element.dialStep
-                mod: element.mod(parseFloat(textValue))
-            }
         }
-    }
 
-    ColumnLayout {
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.preferredHeight: 150
-        Layout.maximumHeight: 150
+        ColumnLayout {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.preferredHeight: 120
+            Layout.maximumHeight: 120
 
-        RowLayout {
-            Layout.alignment: Qt.AlignVCenter
-
-            // Waveform dropdown menu
             ColumnLayout {
+                Layout.alignment: Qt.AlignVCenter
+
                 Label {
                     text: "Waveform"
                     width: 60
@@ -61,19 +61,19 @@ RowLayout {
                     width: 100
                     model: ["Lowpass", "Highpass", "Bandpass", "Bandstop", "Allpass"]
                     currentIndex: 0
-                    Layout.alignment: Qt.AlignHCenter
+                    Layout.alignment: Qt.AlignVCenter
                     onActivated: {
                         pyo.set_filter(filterIndex, currentIndex);
                     }
                 }
             }
+        }
 
-            KnobGroup {
-                type: "Mix"
-                mod: pyo.filter_mix(filterIndex, parseFloat(textValue))
-                defaultValue: 100
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            }
+        KnobGroup {
+            type: "Mix"
+            mod: pyo.filter_mix(filterIndex, parseFloat(textValue))
+            defaultValue: 100
+            Layout.alignment: Qt.AlignTop
         }
     }
 }

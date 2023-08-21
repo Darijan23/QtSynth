@@ -46,8 +46,6 @@ class PlaybackThread(QThread):
         self.play = False
         self.reset = True
         self.playback_in_progress = False
-        self.playback_finished = Signal()
-        self.playback_stopped = Signal()
 
         self.messages = None
         self.clock = CustomClock()
