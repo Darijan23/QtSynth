@@ -1,4 +1,5 @@
 import sys
+import json
 
 from PySide6.QtCore import Slot, QObject, QUrl, Property, Signal
 from PySide6.QtQml import QmlElement
@@ -386,12 +387,17 @@ class PyoThread(QObject):
 
     @Slot(QUrl)
     def set_midi_file(self, url):
-        print("dingus")
         self.midiFile = MidiFile(url.path())
         self.playback_thread.file = self.midiFile
         self.playback_thread.init_file()
         if not self.playback_thread.isRunning():
             self.playback_thread.start()
+
+    @Slot(str, QUrl)
+    def save_preset(self, preset, url):
+        with open(url.path(), "w+") as file:
+            file.write(preset)
+            file.close()
 
     @Slot()
     def toggle_playback(self):

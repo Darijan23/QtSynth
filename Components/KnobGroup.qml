@@ -9,7 +9,6 @@ Item {
     default property var step: 1.0
     property int defaultValue: 50
     property alias textValue: dial.value
-
     Column {
         anchors.top: parent.top
         Label {
@@ -43,6 +42,12 @@ Item {
             horizontalAlignment: TextInput.AlignRight
 
             onTextChanged: mod
+        }
+
+        Binding {
+            target: dial
+            property: "value"
+            value: parseFloat(field.text)
         }
     }
 }
