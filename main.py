@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import sys
+import os
 from pyo import *
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from PyoThread import PyoThread
 
 
 if __name__ == "__main__":
+    os.environ['QML_XHR_ALLOW_FILE_READ'] = '1'
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
     qml_file = Path(__file__).resolve().parent / "main.qml"

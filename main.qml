@@ -82,44 +82,103 @@ ApplicationWindow {
         }
     ]
 
+    MessageDialog {
+        id: errorMessageDialog
+        title: "Error"
+        text: "Invalid preset file"
+        visible: false
+        onAccepted: {
+            errorMessageDialog.visible = false
+        }
+    }
+
     function serialize(oscillators, filters) {
-        var serializedOscillators = {};
+        var serializedOscillators = [];
 
         for (var i = 0; i < oscillators.length; i++) {
             var oscillator = oscillators[i];
 
-            var serializedOscillator = {};
+            var serializedOscillator = [];
 
             for (var j = 0; j < oscillator.children.length; j++) {
                 var knobGroup = oscillator.children[j];
 
                 if (knobGroup.type) {
-                    serializedOscillator[knobGroup.type] = knobGroup.textValue;
+                    serializedOscillator.push(parseFloat(knobGroup.textValue));
                 }
             }
 
-            serializedOscillators[i] = serializedOscillator;
+            serializedOscillators.push(serializedOscillator);
         }
 
-        var serializedFilters = {};
+        var serializedFilters = [];
 
         for (var i = 0; i < filters.length; i++) {
             var filter = filters[i];
 
-            var serializedFilter = {};
+            var serializedFilter = [];
 
             for (var j = 0; j < filter.children.length; j++) {
                 var knobGroup = filter.children[j];
 
                 if (knobGroup.type) {
-                    serializedFilter[knobGroup.type] = knobGroup.textValue;
+                    serializedFilter.push(parseFloat(knobGroup.textValue));
                 }
             }
 
-            serializedFilters[i] = serializedFilter;
+            serializedFilters.push(serializedFilter);
         }
 
         return JSON.stringify({ Valid: true, Oscillators: serializedOscillators, Filters: serializedFilters }, null, 4);
+    }
+
+    function readFile(filePath) {
+        var file = new XMLHttpRequest();
+        file.open("GET", filePath, true);
+        file.onreadystatechange = function() {
+            if (file.readyState === XMLHttpRequest.DONE) {
+                if (file.status === 200) {
+                    try {
+                        var jsonContent = file.responseText;
+                        var parsedJson = JSON.parse(jsonContent);
+                        if (parsedJson["Valid"] !== true) {
+                            errorMessageDialog.open();
+                            return null;
+                        }
+                        setPreset(parsedJson, oscillatorModels, filterModels);
+                    } catch (e) {
+                        console.error(e)
+                        errorMessageDialog.open();
+                    }
+                } else {
+                    console.error("Error reading file:", file.statusText);
+                    errorMessageDialog.open();
+                }
+            }
+        };
+        file.send();
+    }
+
+    function setPreset(preset_json) {
+        var oscillators = preset_json["Oscillators"];
+        for (var i = 0; i < oscillators.length; i++) {
+            var oscillator = oscillatorModels[i];
+            var oscillator_params = oscillators[i];
+
+            for (var j = 0; j < oscillator_params.length; j++) {
+                oscillator.get(j).textValue = oscillator_params[j];
+            }
+        }
+
+        var filters = preset_json["Filters"];
+        for (var i = 0; i < filters.length; i++) {
+            var filter = filterModels[i];
+            var filter_params = filter[i];
+
+            for (var j = 0; j < filter_params.length; j++) {
+                filter.get(j).textValue = filter_params[j];
+            }
+        }
     }
 
     PyoThread {
@@ -154,7 +213,7 @@ ApplicationWindow {
             fileMode: FileDialog.OpenFile
             nameFilters: ["JSON files (*.json)", "Any (*)"]
             onAccepted: {
-                pyo.set_midi_file(selectedFile);
+                readFile(selectedFile);
             }
         }
 
@@ -166,6 +225,24 @@ ApplicationWindow {
             onAccepted: {
                 var preset_content = serialize(oscillatorModels, filterModels)
                 pyo.save_preset(preset_content, selectedFile);
+            }
+        }
+
+        Button {
+            id: presetSave
+            text: "Save preset"
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            onClicked: {
+                presetSaveFileDialog.open()
+            }
+        }
+
+        Button {
+            id: presetLoad
+            text: "Load preset"
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            onClicked: {
+                presetLoadFileDialog.open()
             }
         }
 
@@ -183,7 +260,6 @@ ApplicationWindow {
                 console.log(serialize(oscillatorModels, filterModels))
                 freq3.textValue = 2000;
                 filterModels[2].get(3).textValue = 3
-                presetSaveFileDialog.open()
             }
         }
     }
