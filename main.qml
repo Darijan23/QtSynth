@@ -82,6 +82,14 @@ ApplicationWindow {
         }
     ]
 
+    ObjectModel {
+        id: groupModel
+
+        OscillatorFilterGroup { id: group1; groupIndex: 0; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+        OscillatorFilterGroup { id: group2; groupIndex: 1; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+        OscillatorFilterGroup { id: group3; groupIndex: 2; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+    }
+
     MessageDialog {
         id: errorMessageDialog
         title: "Error"
@@ -145,7 +153,7 @@ ApplicationWindow {
                             errorMessageDialog.open();
                             return null;
                         }
-                        setPreset(parsedJson, oscillatorModels, filterModels);
+                        setPreset(parsedJson);
                     } catch (e) {
                         console.error(e)
                         errorMessageDialog.open();
@@ -173,7 +181,7 @@ ApplicationWindow {
         var filters = preset_json["Filters"];
         for (var i = 0; i < filters.length; i++) {
             var filter = filterModels[i];
-            var filter_params = filter[i];
+            var filter_params = filters[i];
 
             for (var j = 0; j < filter_params.length; j++) {
                 filter.get(j).textValue = filter_params[j];
@@ -295,100 +303,13 @@ ApplicationWindow {
             ColumnLayout {
                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-                RowLayout {
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                    ColumnLayout {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.minimumWidth: 1000
-                        Layout.preferredWidth: 1200
-
-                        RowLayout {
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                            Oscillator {
-                                id: osc1
-                                pyo: pyo
-                                type: "Oscillator 1"
-                                knobModel: oscillatorModel1
-                                oscIndex: 0
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                            }
-
-                            Item {
-                                // spacer item
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
-
-                            Filter {
-                                id: filter1
-                                pyo: pyo
-                                knobModel: filterModel1
-                                filterIndex: 0
-                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                            Oscillator {
-                                id: osc2
-                                pyo: pyo
-                                type: "Oscillator 2"
-                                knobModel: oscillatorModel2
-                                oscIndex: 1
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillWidth: true
-                            }
-
-                            Item {
-                                // spacer item
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
-
-                            Filter {
-                                id: filter2
-                                pyo: pyo
-                                knobModel: filterModel2
-                                filterIndex: 1
-                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                                Layout.fillWidth: true
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-
-                            Oscillator {
-                                id: osc3
-                                pyo: pyo
-                                type: "Noise oscillator"
-                                knobModel: oscillatorModel3
-                                oscIndex: 2
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                            }
-
-                            Item {
-                                // spacer item
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                            }
-
-                            Filter {
-                                id: filter3
-                                pyo: pyo
-                                knobModel: filterModel3
-                                filterIndex: 2
-                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            }
-                        }
-                    }
+                ListView {
+                    id: oscillatorFilterView
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.minimumWidth: 1200
+                    Layout.minimumHeight: 1400
+                    model: groupModel
                 }
 
                 RowLayout {

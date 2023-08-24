@@ -10,6 +10,7 @@ ColumnLayout {
     property alias knobModel: filter.model
     property int filterIndex;
     property var mixFunc: function() {}
+    property alias mixValue: mixKnob.textValue
     default property var dialStep: 1.0
 
     spacing: 20
@@ -70,6 +71,7 @@ ColumnLayout {
         }
 
         KnobGroup {
+            id: mixKnob
             type: "Mix"
             mod: pyo.filter_mix(filterIndex, parseFloat(textValue))
             defaultValue: 100
