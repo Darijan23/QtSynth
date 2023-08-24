@@ -68,18 +68,7 @@ class PyoThread(QObject):
         self.f2_toggle = True
         self.f3_toggle = True
 
-        self._test_counter = 0
-
         self.s.start()
-
-    @Property(int, notify=counter_changed)
-    def test_counter(self):
-        return self._test_counter
-
-    @test_counter.setter
-    def test_counter(self, value):
-        if value != self._test_counter:
-            self._test_counter = value
 
     @Slot(int)
     def set_bpm(self, bpm):

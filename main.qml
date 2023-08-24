@@ -214,6 +214,9 @@ ApplicationWindow {
     RowLayout {
         id: bpmRow
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+        Layout.topMargin: 10
+        Layout.bottomMargin: 10
+        spacing: 10
 
         Label {
             Layout.leftMargin: 10
@@ -269,23 +272,6 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             onClicked: {
                 presetLoadFileDialog.open()
-            }
-        }
-
-        Button {
-            id: ajmoProbat
-            text: pyo.test_counter
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-            onClicked: {
-                // console.log(filter3.knobModel);
-                // console.log(freq3);
-                // console.log(freq3.textValue)
-                console.log(pyo.test_counter);
-                console.log(midiTab.midiFile)
-                pyo.test_counter = pyo.test_counter + 1;
-                console.log(serialize(groupModel))
-                freq3.textValue = 2000;
-                filterModels[2].get(3).textValue = 3
             }
         }
     }
