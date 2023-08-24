@@ -14,7 +14,8 @@ QML_IMPORT_MAJOR_VERSION = 1
 
 @QmlElement
 class PyoThread(QObject):
-    counter_changed = Signal(int)
+    bpmChanged = Signal(float)
+    bpm = Property(float, lambda self: self._bpm, bpmChanged)
 
     def __init__(self):
         super().__init__()
@@ -24,7 +25,7 @@ class PyoThread(QObject):
         self.s.boot()
         self.s.amp = 1.
 
-        self.bpm = 120
+        self._bpm = 120.0
 
         self.notes = Notein(scale=1)
         self.noise_notes = Notein(scale=1, poly=10)
@@ -70,9 +71,11 @@ class PyoThread(QObject):
 
         self.s.start()
 
-    @Slot(int)
-    def set_bpm(self, bpm):
-        self.bpm = bpm
+    @Slot(float)
+    def set_bpm(self, value):
+        self._bpm = value
+        self.bpmChanged.emit(value)
+        self.playback_thread.set_bpm(self.bpm)
 
     @Slot()
     def play_note(self):
@@ -381,6 +384,7 @@ class PyoThread(QObject):
         self.playback_thread.init_file()
         if not self.playback_thread.isRunning():
             self.playback_thread.start()
+        self.set_bpm(self.playback_thread.bpm)
 
     @Slot(str, QUrl)
     def save_preset(self, preset, url):

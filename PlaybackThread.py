@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from PySide6.QtCore import Slot, QObject, QUrl, QThread, Signal
 from PySide6.QtQml import QmlElement
-from mido import MidiFile, Message
+from mido import MidiFile, Message, MetaMessage, tempo2bpm, bpm2tempo
 
 from pyo import *
 
@@ -46,6 +46,7 @@ class PlaybackThread(QThread):
         self.play = False
         self.reset = True
         self.playback_in_progress = False
+        self.bpm = 120
 
         self.messages = None
         self.clock = CustomClock()
@@ -53,6 +54,13 @@ class PlaybackThread(QThread):
     def init_file(self):
         self.clock.__init__()
         self.messages = self.file.play(now=self.clock.get_time)
+        self.set_bpm(tempo2bpm(self.file.ticks_per_beat))
+
+    def set_bpm(self, bpm):
+        self.bpm = round(bpm)
+        tempo = bpm2tempo(self.bpm)
+        bpm_message = MetaMessage("set_tempo", tempo=tempo)
+        # self.s.addMidiEvent(*bpm_message.bytes())    # Ne radi
 
     def run(self):
         while not self.file:
