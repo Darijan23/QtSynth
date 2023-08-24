@@ -11,6 +11,7 @@ ColumnLayout {
     property int filterIndex;
     property var mixFunc: function() {}
     property alias mixValue: mixKnob.textValue
+    property alias shapeIndex: shapeComboBox.currentIndex
     default property var dialStep: 1.0
 
     spacing: 20
@@ -58,7 +59,7 @@ ColumnLayout {
                 }
 
                 ComboBox {
-                    id: waveformComboBox
+                    id: shapeComboBox
                     width: 100
                     model: ["Lowpass", "Highpass", "Bandpass", "Bandstop", "Allpass"]
                     currentIndex: 0

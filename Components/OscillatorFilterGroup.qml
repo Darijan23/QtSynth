@@ -8,6 +8,8 @@ RowLayout {
     property var pyoGlob;
     property var oscillatorModel;
     property var filterModel;
+    property alias osc: osc
+    property alias fltr: filter
 
     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
@@ -25,6 +27,7 @@ RowLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.minimumWidth: 50
+        property var type: "spacer"
     }
 
     Filter {

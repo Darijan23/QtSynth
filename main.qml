@@ -100,39 +100,48 @@ ApplicationWindow {
         }
     }
 
-    function serialize(oscillators, filters) {
+    function serialize(groups) {
         var serializedOscillators = [];
-
-        for (var i = 0; i < oscillators.length; i++) {
-            var oscillator = oscillators[i];
-
-            var serializedOscillator = [];
-
-            for (var j = 0; j < oscillator.children.length; j++) {
-                var knobGroup = oscillator.children[j];
-
-                if (knobGroup.type) {
-                    serializedOscillator.push(parseFloat(knobGroup.textValue));
-                }
-            }
-
-            serializedOscillators.push(serializedOscillator);
-        }
-
         var serializedFilters = [];
 
-        for (var i = 0; i < filters.length; i++) {
-            var filter = filters[i];
+        for (let i = 0; i < groups.children.length; i++) {
+            var group = groups.children[i];
+            var oscillator = group.osc;
+            var filter = group.fltr;
 
-            var serializedFilter = [];
+            var serializedOscillator = {};
+            var oscillatorKnobs = [];
+            var oscillatorModel = oscillator.knobModel
 
-            for (var j = 0; j < filter.children.length; j++) {
-                var knobGroup = filter.children[j];
+            for (let j = 0; j < oscillatorModel.children.length; j++) {
+                var knobGroup = oscillatorModel.children[j];
 
                 if (knobGroup.type) {
-                    serializedFilter.push(parseFloat(knobGroup.textValue));
+                    oscillatorKnobs.push(parseFloat(knobGroup.textValue));
                 }
             }
+
+            serializedOscillator["KnobValues"] = oscillatorKnobs;
+            serializedOscillator["Toggled"] = oscillator.toggleOsc;
+            serializedOscillator["Waveform"] = oscillator.waveIndex;
+
+            serializedOscillators.push(serializedOscillator);
+
+            var serializedFilter = {};
+            var filterKnobs = [];
+            var filterModel = filter.knobModel;
+
+            for (let j = 0; j < filterModel.children.length; j++) {
+                var knobGroup = filterModel.children[j];
+
+                if (knobGroup.type) {
+                    filterKnobs.push(parseFloat(knobGroup.textValue));
+                }
+            }
+
+            serializedFilter["KnobValues"] = filterKnobs;
+            serializedFilter["Mix"] = filter.mixValue;
+            serializedFilter["Shape"] = filter.shapeIndex;
 
             serializedFilters.push(serializedFilter);
         }
@@ -169,23 +178,32 @@ ApplicationWindow {
 
     function setPreset(preset_json) {
         var oscillators = preset_json["Oscillators"];
-        for (var i = 0; i < oscillators.length; i++) {
-            var oscillator = oscillatorModels[i];
-            var oscillator_params = oscillators[i];
+        var filters = preset_json["Filters"];
+
+        for (let i = 0; i < groupModel.children.length; i++) {
+            var group = groupModel.children[i]
+            var oscillator = group.osc;
+            var filter = group.fltr;
+
+            var oscillatorModel = oscillator.knobModel;
+            var filterModel = filter.knobModel;
+
+            var oscillator_params = oscillators[i]["KnobValues"];
+            var filter_params = filters[i]["KnobValues"];
 
             for (var j = 0; j < oscillator_params.length; j++) {
-                oscillator.get(j).textValue = oscillator_params[j];
+                oscillatorModel.get(j).textValue = oscillator_params[j];
             }
-        }
 
-        var filters = preset_json["Filters"];
-        for (var i = 0; i < filters.length; i++) {
-            var filter = filterModels[i];
-            var filter_params = filters[i];
+            oscillator.toggleOsc = oscillators[i]["Toggled"];
+            oscillator.waveIndex = oscillators[i]["Waveform"];
 
             for (var j = 0; j < filter_params.length; j++) {
-                filter.get(j).textValue = filter_params[j];
+                filterModel.get(j).textValue = filter_params[j];
             }
+
+            filter.mixValue = filters[i]["Mix"];
+            filter.shapeIndex = filters[i]["Shape"];
         }
     }
 
@@ -231,7 +249,7 @@ ApplicationWindow {
             nameFilters: ["JSON files (*.json)", "Any (*)"]
             defaultSuffix: "json"
             onAccepted: {
-                var preset_content = serialize(oscillatorModels, filterModels)
+                var preset_content = serialize(groupModel)
                 pyo.save_preset(preset_content, selectedFile);
             }
         }
@@ -265,7 +283,7 @@ ApplicationWindow {
                 console.log(pyo.test_counter);
                 console.log(midiTab.midiFile)
                 pyo.test_counter = pyo.test_counter + 1;
-                console.log(serialize(oscillatorModels, filterModels))
+                console.log(serialize(groupModel))
                 freq3.textValue = 2000;
                 filterModels[2].get(3).textValue = 3
             }

@@ -9,7 +9,7 @@ ColumnLayout {
     property var pyo;
     property var knobModel;
     property var waveformModel: ["Saw up", "Saw down", "Square", "Triangle", "Pulse", "Bipolar Pulse", "Sample and hold", "Sine"]
-    property var waveIndex: 7
+    property alias waveIndex: waveformComboBox.currentIndex
     property int oscIndex;
 
     spacing: 20
@@ -62,7 +62,7 @@ ColumnLayout {
                         id: waveformComboBox
                         width: 100
                         model: waveformModel
-                        currentIndex: waveIndex
+                        currentIndex: 7
                         Layout.alignment: Qt.AlignHCenter
                         onActivated: {
                             pyo.set_oscillator(oscIndex, currentIndex);
