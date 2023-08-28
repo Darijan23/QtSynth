@@ -14,6 +14,8 @@ ApplicationWindow {
 
     property int dialInputMode: Dial.Vertical
 
+    property list<string> noiseWaveforms: ["White noise", "Pink noise", "Brown noise"]
+
     property list<ObjectModel> oscillatorModels: [
         ObjectModel {
             id: oscillatorModel1
@@ -85,10 +87,66 @@ ApplicationWindow {
     ObjectModel {
         id: groupModel
 
-        OscillatorFilterGroup { id: group1; groupIndex: 0; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
-        OscillatorFilterGroup { id: group2; groupIndex: 1; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
-        OscillatorFilterGroup { id: group3; groupIndex: 2; pyoGlob: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+        OscillatorFilterGroup { id: group1; groupIndex: 0; pyoVar: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+        OscillatorFilterGroup { id: group2; groupIndex: 1; pyoVar: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex] }
+        OscillatorFilterGroup { id: group3; groupIndex: 2; pyoVar: pyo; oscillatorModel: oscillatorModels[groupIndex]; filterModel: filterModels[groupIndex];
+                                oscillatorType: "Noise oscillator"; oscillatorWaveforms: noiseWaveforms; oscillatorWaveIndex: 0 }
     }
+
+    property list<ObjectModel> fxModels: [
+        ObjectModel {
+            id: distortionModel
+
+            KnobGroup { id: drive; type: "Drive"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_drive(parseFloat(textValue)) }
+            KnobGroup { id: slope; type: "Slope"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_slope(parseFloat(textValue)) }
+            KnobGroup { id: distoMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_distortion_mix(parseFloat(textValue)) }
+        },
+
+        ObjectModel {
+            id: chorusModel
+
+            KnobGroup { id: depth; type: "Depth"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_chorus_depth(parseFloat(textValue)) }
+            KnobGroup { id: chorusFeedback; type: "Feedback"; min: 0; max: 100; defaultValue: 25; mod: pyo.set_chorus_feedback(parseFloat(textValue)) }
+            KnobGroup { id: chorusMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_chorus_mix(parseFloat(textValue)) }
+        },
+
+        ObjectModel {
+            id: phaserModel
+
+            KnobGroup { id: phaserFreq; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_phaser_freq(parseFloat(textValue)) }
+            KnobGroup { id: spread; type: "Spread"; min: 0; max: 10; defaultValue: 1.1; step: 0.1; mod: pyo.set_phaser_spread(parseFloat(textValue)) }
+            KnobGroup { id: phaserQ; type: "Q"; min: 1; max: 100; defaultValue: 10; mod: pyo.set_phaser_Q(parseFloat(textValue)) }
+            KnobGroup { id: phaserFeedback; type: "Feedback"; min: 0; max: 100; defaultValue: 25; mod: pyo.set_phaser_feedback(parseFloat(textValue)) }
+            KnobGroup { id: phaserMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_phaser_mix(parseFloat(textValue)) }
+        },
+
+        ObjectModel {
+            id: delayModel
+
+            KnobGroup { id: delayTime; type: "Delay"; min: 50; max: 5000; defaultValue: 0; mod: pyo.set_delay_time(parseFloat(textValue)) }
+            KnobGroup { id: delayFeedback; type: "Feedback"; min: 0; max: 100; defaultValue: 25; mod: pyo.set_delay_feedback(parseFloat(textValue)) }
+            KnobGroup { id: delayMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_delay_mix(parseFloat(textValue)) }
+        },
+
+        ObjectModel {
+            id: reverbModel
+
+            KnobGroup { id: reverbSize; type: "Size"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_reverb_size(parseFloat(textValue)) }
+            KnobGroup { id: damp; type: "Damping"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_reverb_damp(parseFloat(textValue)) }
+            KnobGroup { id: reverbMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_reverb_mix(parseFloat(textValue)) }
+        }
+    ]
+
+    ObjectModel {
+        id: fxModel
+
+        Effect { id: distortion; type: "Distortion"; pyoVar: pyo; knobModel: distortionModel }
+        Effect { id: chorus; type: "Chorus"; pyoVar: pyo; knobModel: chorusModel }
+        Effect { id: phaser; type: "Phaser"; pyoVar: pyo; knobModel: phaserModel }
+        Effect { id: delay; type: "Delay"; pyoVar: pyo; knobModel: delayModel }
+        Effect { id: reverb; type: "Reverb"; pyoVar: pyo; knobModel: reverbModel }
+    }
+
 
     MessageDialog {
         id: errorMessageDialog
@@ -295,6 +353,7 @@ ApplicationWindow {
     }
 
     StackLayout {
+        id: stack
         anchors.top: bar.bottom
         anchors.left: parent.left
         anchors.margins: 10
@@ -313,43 +372,24 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.minimumWidth: 1200
                     Layout.minimumHeight: 1400
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     model: groupModel
-                }
-
-                RowLayout {
-                    Layout.alignment: Qt.AlignBottom
-
-                    Label {
-                        text: "Dial control"
-                        width: 100
-                        horizontalAlignment: Text.AlignRight
-                        Layout.alignment: Qt.AlignRight
-                    }
-
-                    ComboBox {
-                        width: 100
-                        Layout.alignment: Qt.AlignRight
-                        model: ["Vertical", "Horizontal", "Circular"]
-                        currentIndex: 0
-                        onCurrentIndexChanged: {
-                            switch (currentIndex) {
-                                case 0:
-                                    dialInputMode = Dial.Vertical
-                                    break
-                                case 1:
-                                    dialInputMode = Dial.Horizontal
-                                    break
-                                case 2:
-                                    dialInputMode = Dial.Circular
-                                    break
-                            }
-                        }
-                    }
                 }
             }
         }
         Item {
             id: fxTab
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            GridView {
+                id: fxGridView
+                anchors.fill: parent
+                cellWidth: 550
+                cellHeight: 180
+                model: fxModel
+            }
         }
         Item {
             id: midiTab
@@ -404,6 +444,38 @@ ApplicationWindow {
                         midiTab.stopped = true
                         pyo.stop_playback()
                     }
+                }
+            }
+        }
+    }
+
+    RowLayout {
+        anchors.bottom: parent.bottom
+        Layout.alignment: Qt.AlignBottom
+
+        Label {
+            text: "Dial control"
+            width: 100
+            horizontalAlignment: Text.AlignRight
+            Layout.alignment: Qt.AlignRight
+        }
+
+        ComboBox {
+            width: 100
+            Layout.alignment: Qt.AlignRight
+            model: ["Vertical", "Horizontal", "Circular"]
+            currentIndex: 0
+            onCurrentIndexChanged: {
+                switch (currentIndex) {
+                    case 0:
+                        dialInputMode = Dial.Vertical
+                        break
+                    case 1:
+                        dialInputMode = Dial.Horizontal
+                        break
+                    case 2:
+                        dialInputMode = Dial.Circular
+                        break
                 }
             }
         }

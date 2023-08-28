@@ -12,7 +12,6 @@ ColumnLayout {
     property var mixFunc: function() {}
     property alias mixValue: mixKnob.textValue
     property alias shapeIndex: shapeComboBox.currentIndex
-    default property var dialStep: 1.0
 
     spacing: 20
 

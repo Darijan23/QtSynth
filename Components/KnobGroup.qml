@@ -7,8 +7,9 @@ Item {
     property int min: 0
     property int max: 100
     default property var step: 1.0
-    property int defaultValue: 50
+    property double defaultValue: 50
     property alias textValue: dial.value
+
     Column {
         anchors.top: parent.top
         Label {

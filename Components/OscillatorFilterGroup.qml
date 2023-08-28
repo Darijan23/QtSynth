@@ -5,9 +5,12 @@ import QtQuick.Layouts
 RowLayout {
     id: oscFilterGroup
     property int groupIndex: 0
-    property var pyoGlob;
+    property var pyoVar;
     property var oscillatorModel;
     property var filterModel;
+    property alias oscillatorType: osc.type
+    property alias oscillatorWaveforms: osc.waveformModel
+    property alias oscillatorWaveIndex: osc.waveIndex
     property alias osc: osc
     property alias fltr: filter
 
@@ -15,7 +18,7 @@ RowLayout {
 
     Oscillator {
         id: osc
-        pyo: pyoGlob
+        pyo: pyoVar
         type: "Oscillator %1".arg(groupIndex + 1)
         knobModel: oscillatorModel
         oscIndex: groupIndex
@@ -32,7 +35,7 @@ RowLayout {
 
     Filter {
         id: filter
-        pyo: pyoGlob
+        pyo: pyoVar
         type: "Filter %1".arg(groupIndex + 1)
         knobModel: filterModel
         filterIndex: groupIndex

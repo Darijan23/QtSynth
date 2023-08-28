@@ -61,6 +61,17 @@ class PyoThread(QObject):
         self.filter3 = Biquad(self.pan3, freq=self.lfo3)
         self.osc3out = Selector(inputs=[self.pan3, self.filter3], voice=1.).out()
 
+        self.oscMix = Mix(input=[self.osc1out, self.osc2out, self.osc3out], voices=2).out()
+
+        self.distortion = Disto(input=self.oscMix, drive=0.).out()
+        self.distOut = Selector(inputs=[self.oscMix, self.distortion], voice=0.).out()
+        self.chorus = Chorus(input=self.distOut, depth=0, feedback=0, bal=0.).out()
+        self.phaser = Phaser(input=self.chorus).out()
+        self.phsrOut = Selector(inputs=[self.chorus, self.phaser], voice=0.).out()
+        self.delay = Delay(input=self.phsrOut, maxdelay=10).out()
+        self.dlyOut = Selector(inputs=[self.phsrOut, self.delay], voice=0.).out()
+        self.reverb = Freeverb(input=self.dlyOut, bal=0.).out()
+
         self.midiFile = None
         self.playback_thread = PlaybackThread(self.s, self.midiFile)
         self.playback_thread.start()
@@ -376,6 +387,74 @@ class PyoThread(QObject):
     def set_filter(self, ind, shape):
         set_functions = [self.set_filter1, self.set_filter2, self.set_filter3]
         set_functions[ind](shape)
+
+    @Slot(float)
+    def set_drive(self, drive):
+        self.distortion.setDrive(drive * 0.01)
+
+    @Slot(float)
+    def set_slope(self, slope):
+        self.distortion.setSlope(slope * 0.01)
+
+    @Slot(float)
+    def set_distortion_mix(self, mix):
+        self.distOut.setVoice(mix * 0.01)
+
+    @Slot(float)
+    def set_chorus_depth(self, depth):
+        self.chorus.setDepth(depth * 0.01)
+
+    @Slot(float)
+    def set_chorus_feedback(self, feedback):
+        self.chorus.setFeedback(feedback * 0.01)
+
+    @Slot(float)
+    def set_chorus_mix(self, mix):
+        self.chorus.setBal(mix * 0.01)
+
+    @Slot(float)
+    def set_phaser_freq(self, freq):
+        self.phaser.setFreq(freq)
+
+    @Slot(float)
+    def set_phaser_spread(self, spread):
+        self.phaser.setSpread(spread)
+
+    @Slot(float)
+    def set_phaser_Q(self, q):
+        self.phaser.setQ(q)
+
+    @Slot(float)
+    def set_phaser_feedback(self, feedback):
+        self.phaser.setFeedback(feedback * 0.01)
+
+    @Slot(float)
+    def set_phaser_mix(self, mix):
+        self.phsrOut.setVoice(mix * 0.01)
+
+    @Slot(float)
+    def set_delay_time(self, delay):
+        self.delay.setDelay(delay * 0.001)
+
+    @Slot(float)
+    def set_delay_feedback(self, feedback):
+        self.delay.setFeedback(feedback * 0.01)
+
+    @Slot(float)
+    def set_delay_mix(self, mix):
+        self.dlyOut.setVoice(mix * 0.01)
+
+    @Slot(float)
+    def set_reverb_size(self, size):
+        self.reverb.setSize(size * 0.01)
+
+    @Slot(float)
+    def set_reverb_damp(self, damp):
+        self.reverb.setDamp(damp * 0.01)
+
+    @Slot(float)
+    def set_reverb_mix(self, mix):
+        self.reverb.setBal(mix * 0.01)
 
     @Slot(QUrl)
     def set_midi_file(self, url):
