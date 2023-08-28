@@ -4,8 +4,8 @@ import QtQuick.Controls
 Item {
     property string type: "Label"
     property var mod: function() {}
-    property int min: 0
-    property int max: 100
+    property double min: 0
+    property double max: 100
     default property var step: 1.0
     property double defaultValue: 50
     property alias textValue: dial.value

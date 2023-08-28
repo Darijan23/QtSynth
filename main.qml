@@ -97,15 +97,15 @@ ApplicationWindow {
         ObjectModel {
             id: distortionModel
 
-            KnobGroup { id: drive; type: "Drive"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_drive(parseFloat(textValue)) }
-            KnobGroup { id: slope; type: "Slope"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_slope(parseFloat(textValue)) }
+            KnobGroup { id: distoDrive; type: "Drive"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_drive(parseFloat(textValue)) }
+            KnobGroup { id: distoSlope; type: "Slope"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_slope(parseFloat(textValue)) }
             KnobGroup { id: distoMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_distortion_mix(parseFloat(textValue)) }
         },
 
         ObjectModel {
             id: chorusModel
 
-            KnobGroup { id: depth; type: "Depth"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_chorus_depth(parseFloat(textValue)) }
+            KnobGroup { id: chorusDepth; type: "Depth"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_chorus_depth(parseFloat(textValue)) }
             KnobGroup { id: chorusFeedback; type: "Feedback"; min: 0; max: 100; defaultValue: 25; mod: pyo.set_chorus_feedback(parseFloat(textValue)) }
             KnobGroup { id: chorusMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_chorus_mix(parseFloat(textValue)) }
         },
@@ -114,7 +114,7 @@ ApplicationWindow {
             id: phaserModel
 
             KnobGroup { id: phaserFreq; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_phaser_freq(parseFloat(textValue)) }
-            KnobGroup { id: spread; type: "Spread"; min: 0; max: 10; defaultValue: 1.1; step: 0.1; mod: pyo.set_phaser_spread(parseFloat(textValue)) }
+            KnobGroup { id: phaserSpread; type: "Spread"; min: 0; max: 10; defaultValue: 1.1; step: 0.1; mod: pyo.set_phaser_spread(parseFloat(textValue)) }
             KnobGroup { id: phaserQ; type: "Q"; min: 1; max: 100; defaultValue: 10; mod: pyo.set_phaser_Q(parseFloat(textValue)) }
             KnobGroup { id: phaserFeedback; type: "Feedback"; min: 0; max: 100; defaultValue: 25; mod: pyo.set_phaser_feedback(parseFloat(textValue)) }
             KnobGroup { id: phaserMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_phaser_mix(parseFloat(textValue)) }
@@ -132,7 +132,7 @@ ApplicationWindow {
             id: reverbModel
 
             KnobGroup { id: reverbSize; type: "Size"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_reverb_size(parseFloat(textValue)) }
-            KnobGroup { id: damp; type: "Damping"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_reverb_damp(parseFloat(textValue)) }
+            KnobGroup { id: reverbDamp; type: "Damping"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_reverb_damp(parseFloat(textValue)) }
             KnobGroup { id: reverbMix; type: "Mix"; min: 0; max: 100; defaultValue: 0; mod: pyo.set_reverb_mix(parseFloat(textValue)) }
         }
     ]
@@ -387,7 +387,7 @@ ApplicationWindow {
                 id: fxGridView
                 anchors.fill: parent
                 cellWidth: 550
-                cellHeight: 180
+                cellHeight: 200
                 model: fxModel
             }
         }
