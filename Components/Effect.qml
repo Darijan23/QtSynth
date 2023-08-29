@@ -21,7 +21,7 @@ ColumnLayout {
 
     GridView {
         id: effect
-        Layout.alignment: Qt.AlignVCenter
+        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillWidth: true
         Layout.fillHeight: true
         Layout.maximumHeight: 250

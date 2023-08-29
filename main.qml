@@ -158,9 +158,10 @@ ApplicationWindow {
         }
     }
 
-    function serialize(groups) {
+    function serialize(groups, effects) {
         var serializedOscillators = [];
         var serializedFilters = [];
+        var serializedEffects = []
 
         for (let i = 0; i < groups.children.length; i++) {
             var group = groups.children[i];
@@ -204,7 +205,26 @@ ApplicationWindow {
             serializedFilters.push(serializedFilter);
         }
 
-        return JSON.stringify({ Valid: true, Oscillators: serializedOscillators, Filters: serializedFilters }, null, 4);
+        for (let i = 0; i < effects.children.length; i++) {
+            var effect = effects.children[i];
+            var effectModel = effect.knobModel;
+
+            var serializedEffect = {};
+            var effectKnobs = [];
+
+            for (let j = 0; j < effectModel.children.length; j++) {
+                var knobGroup = effectModel.children[j];
+
+                if (knobGroup.type) {
+                    effectKnobs.push(parseFloat(knobGroup.textValue));
+                }
+            }
+
+            serializedEffect["KnobValues"] = effectKnobs;
+            serializedEffects.push(serializedEffect);
+        }
+
+        return JSON.stringify({ Valid: true, Oscillators: serializedOscillators, Filters: serializedFilters, Effects: serializedEffects }, null, 4);
     }
 
     function readFile(filePath) {
@@ -237,6 +257,7 @@ ApplicationWindow {
     function setPreset(preset_json) {
         var oscillators = preset_json["Oscillators"];
         var filters = preset_json["Filters"];
+        var effects = preset_json["Effects"];
 
         for (let i = 0; i < groupModel.children.length; i++) {
             var group = groupModel.children[i]
@@ -246,22 +267,33 @@ ApplicationWindow {
             var oscillatorModel = oscillator.knobModel;
             var filterModel = filter.knobModel;
 
-            var oscillator_params = oscillators[i]["KnobValues"];
-            var filter_params = filters[i]["KnobValues"];
+            var oscillatorParams = oscillators[i]["KnobValues"];
+            var filterParams = filters[i]["KnobValues"];
 
-            for (var j = 0; j < oscillator_params.length; j++) {
-                oscillatorModel.get(j).textValue = oscillator_params[j];
+            for (var j = 0; j < oscillatorParams.length; j++) {
+                oscillatorModel.get(j).textValue = oscillatorParams[j];
             }
 
             oscillator.toggleOsc = oscillators[i]["Toggled"];
             oscillator.waveIndex = oscillators[i]["Waveform"];
 
-            for (var j = 0; j < filter_params.length; j++) {
-                filterModel.get(j).textValue = filter_params[j];
+            for (var j = 0; j < filterParams.length; j++) {
+                filterModel.get(j).textValue = filterParams[j];
             }
 
             filter.mixValue = filters[i]["Mix"];
             filter.shapeIndex = filters[i]["Shape"];
+        }
+
+        for (let i = 0; i < fxModel.children.length; i++) {
+            var effect = fxModel.children[i];
+            var effectModel = effect.knobModel;
+
+            var effectParams = effects[i]["KnobValues"];
+
+            for (let j = 0; j < effectParams.length; j++) {
+                effectModel.get(j).textValue = effectParams[j];
+            }
         }
     }
 
@@ -310,7 +342,7 @@ ApplicationWindow {
             nameFilters: ["JSON files (*.json)", "Any (*)"]
             defaultSuffix: "json"
             onAccepted: {
-                var preset_content = serialize(groupModel)
+                var preset_content = serialize(groupModel, fxModel)
                 pyo.save_preset(preset_content, selectedFile);
             }
         }
