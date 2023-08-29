@@ -411,15 +411,13 @@ ApplicationWindow {
         }
         Item {
             id: fxTab
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-            Layout.fillWidth: true
-            Layout.fillHeight: true
 
             GridView {
                 id: fxGridView
                 anchors.fill: parent
                 cellWidth: 550
                 cellHeight: 200
+                currentIndex: -1    // hack ali radi
                 model: fxModel
             }
         }
