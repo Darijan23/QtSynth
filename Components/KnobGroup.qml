@@ -10,6 +10,7 @@ Column {
     default property var step: 1.0
     property double defaultValue: 50
     property alias textValue: dial.value
+    property int ind;
 
     Label {
         id: label

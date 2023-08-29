@@ -65,7 +65,7 @@ ColumnLayout {
                         currentIndex: 7
                         Layout.alignment: Qt.AlignHCenter
                         onActivated: {
-                            pyo.set_oscillator(oscIndex, currentIndex);
+                            pyo.set_osc(oscIndex, currentIndex);
                         }
                     }
                 }
@@ -88,7 +88,7 @@ ColumnLayout {
                         text: toggleOsc ? "On" : "Off"
                         onClicked: {
                             toggleOsc = !toggleOsc;
-                            pyo.toggle_oscillator(oscIndex);
+                            pyo.toggle_osc(oscIndex);
                         }
                         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                     }

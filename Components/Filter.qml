@@ -64,7 +64,7 @@ ColumnLayout {
                     currentIndex: 0
                     Layout.alignment: Qt.AlignVCenter
                     onActivated: {
-                        pyo.set_filter(filterIndex, currentIndex);
+                        pyo.set_filter_shape(filterIndex, currentIndex);
                     }
                 }
             }
@@ -73,7 +73,7 @@ ColumnLayout {
         KnobGroup {
             id: mixKnob
             type: "Mix"
-            mod: pyo.filter_mix(filterIndex, parseFloat(textValue))
+            mod: pyo.set_filter_mix(filterIndex, parseFloat(textValue))
             defaultValue: 100
             Layout.alignment: Qt.AlignTop
         }

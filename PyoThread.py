@@ -16,6 +16,7 @@ QML_IMPORT_MAJOR_VERSION = 1
 class PyoThread(QObject):
     bpmChanged = Signal(float)
     bpm = Property(float, lambda self: self._bpm, bpmChanged)
+    playbackFinished = Signal()
 
     def __init__(self):
         super().__init__()
@@ -74,11 +75,16 @@ class PyoThread(QObject):
 
         self.midiFile = None
         self.playback_thread = PlaybackThread(self.s, self.midiFile)
+        self.playback_thread.playback_finished.connect(self.end_playback)
         self.playback_thread.start()
 
-        self.f1_toggle = True
-        self.f2_toggle = True
-        self.f3_toggle = True
+        self.adsrs = [self.adsr1, self.adsr2, self.adsr3]
+        self.oscillators = [self.osc1, self.osc2, self.osc3]
+        self.octaves = [self.octave1, self.octave2]
+        self.detunes = [self.detune1, self.detune2]
+        self.pans = [self.pan1, self.pan2, self.pan3]
+        self.lfos = [self.lfo1, self.lfo2, self.lfo3]
+        self.filters = [self.filter1, self.filter2, self.filter3]
 
         self.s.start()
 
@@ -88,268 +94,86 @@ class PyoThread(QObject):
         self.bpmChanged.emit(value)
         self.playback_thread.set_bpm(self.bpm)
 
-    @Slot()
-    def play_note(self):
-        self.adsr1.play()
-        self.adsr2.play()
-
-    @Slot()
-    def stop_note(self):
-        self.adsr1.stop()
-        self.adsr2.stop()
-
-    @Slot(str, int)
-    def set_ADSR1(self, param, value):
+    @Slot(int, str, float)
+    def set_ADSR(self, ind, param, value):
+        adsr = self.adsrs[ind]
         if param == "A":
-            self.adsr1.setAttack(value * 0.001)
+            adsr.setAttack(value * 0.001)
         elif param == "D":
-            self.adsr1.setDecay(value * 0.001)
+            adsr.setDecay(value * 0.001)
         elif param == "S":
-            self.adsr1.setSustain(value * 0.01)
+            adsr.setSustain(value * 0.01)
         elif param == "R":
-            self.adsr1.setRelease(value * 0.001)
+            adsr.setRelease(value * 0.001)
+
+    @Slot(int, float)
+    def set_octave(self, ind, value):
+        octave = self.octaves[ind]
+        octave.setTranspo(value * 12)
+
+    @Slot(int, float)
+    def set_detune(self, ind, value):
+        detune = self.detunes[ind]
+        detune.setTranspo(value * 0.02)
+
+    @Slot(int, float)
+    def set_pan(self, ind, value):
+        pan = self.pans[ind]
+        pan.setPan(0.5 + (value * 0.005))
+
+    @Slot(int, float)
+    def set_level(self, ind, value):
+        adsr = self.adsrs[ind]
+        adsr.setMul(value * 0.01 * 0.3)
+
+    @Slot(int, int)
+    def set_osc(self, ind, wave):
+        if ind == 2:
+            self.set_noise_osc(wave)
+        else:
+            osc = self.oscillators[ind]
+            osc.setType(wave)
 
     @Slot(int)
-    def set_A1(self, value):
-        self.set_ADSR1("A", value)
+    def toggle_osc(self, ind):
+        osc = self.pans[ind]
+        osc.setMul(1. - osc.mul)
 
     @Slot(int)
-    def set_D1(self, value):
-        self.set_ADSR1("D", value)
-
-    @Slot(int)
-    def set_S1(self, value):
-        self.set_ADSR1("S", value)
-
-    @Slot(int)
-    def set_R1(self, value):
-        self.set_ADSR1("R", value)
-
-    @Slot(int)
-    def set_octave1(self, value):
-        self.octave1.setTranspo(value * 12)
-
-    @Slot(int)
-    def set_detune1(self, value):
-        self.detune1.setTranspo(value * 0.02)
-
-    @Slot(int)
-    def set_pan1(self, value):
-        self.pan1.setPan(0.5 + (value * 0.005))
-
-    @Slot(int)
-    def set_level1(self, value):
-        self.adsr1.setMul(value * 0.01)
-
-    @Slot(int)
-    def set_osc1(self, wave):
-        self.osc1.setType(wave)
-
-    @Slot()
-    def toggle_osc1(self):
-        self.pan1.setMul(1. - self.pan1.mul)
-
-    @Slot(str, int)
-    def set_ADSR2(self, param, value):
-        if param == "A":
-            self.adsr2.setAttack(value * 0.001)
-        elif param == "D":
-            self.adsr2.setDecay(value * 0.001)
-        elif param == "S":
-            self.adsr2.setSustain(value * 0.01)
-        elif param == "R":
-            self.adsr2.setRelease(value * 0.001)
-
-    @Slot(int)
-    def set_A2(self, value):
-        self.set_ADSR2("A", value)
-
-    @Slot(int)
-    def set_D2(self, value):
-        self.set_ADSR2("D", value)
-
-    @Slot(int)
-    def set_S2(self, value):
-        self.set_ADSR2("S", value)
-
-    @Slot(int)
-    def set_R2(self, value):
-        self.set_ADSR2("R", value)
-
-    @Slot(int)
-    def set_octave2(self, value):
-        self.octave2.setTranspo(value * 12)
-
-    @Slot(int)
-    def set_detune2(self, value):
-        self.detune2.setTranspo(value * 0.02)
-
-    @Slot(int)
-    def set_pan2(self, value):
-        self.pan2.setPan(0.5 + (value * 0.005))
-
-    @Slot(int)
-    def set_level2(self, value):
-        self.adsr2.setMul(value * 0.01)
-
-    @Slot(int)
-    def set_osc2(self, wave):
-        self.osc2.setType(wave)
-
-    @Slot()
-    def toggle_osc2(self):
-        self.pan2.setMul(1. - self.pan2.mul)
-
-    @Slot(str, int)
-    def set_ADSR3(self, param, value):
-        if param == "A":
-            self.adsr3.setAttack(value * 0.001)
-        elif param == "D":
-            self.adsr3.setDecay(value * 0.001)
-        elif param == "S":
-            self.adsr3.setSustain(value * 0.01)
-        elif param == "R":
-            self.adsr3.setRelease(value * 0.001)
-
-    @Slot(int)
-    def set_A3(self, value):
-        self.set_ADSR3("A", value)
-
-    @Slot(int)
-    def set_D3(self, value):
-        self.set_ADSR3("D", value)
-
-    @Slot(int)
-    def set_S3(self, value):
-        self.set_ADSR3("S", value)
-
-    @Slot(int)
-    def set_R3(self, value):
-        self.set_ADSR3("R", value)
-
-    @Slot(int)
-    def set_pan3(self, value):
-        self.pan3.setPan(0.5 + (value * 0.005))
-
-    @Slot(int)
-    def set_level3(self, value):
-        self.adsr3.setMul(value * 0.01)
-
-    @Slot(int)
-    def set_osc3(self, shape):
+    def set_noise_osc(self, shape):
         if shape == 0:
             self.osc3 = Noise(mul=self.adsr3)
         elif shape == 1:
             self.osc3 = BrownNoise(mul=self.adsr3)
         elif shape == 2:
             self.osc3 = PinkNoise(mul=self.adsr3)
-        self.osc3mix = self.osc3
+        self.osc3mix = self.osc3.mix(2)
+        self.pan3.setInput(self.osc3mix)
 
-    @Slot()
-    def toggle_osc3(self):
-        self.pan3.setMul(1. - self.pan3.mul)
+    @Slot(int, float)
+    def set_filter_freq(self, ind, freq):
+        filter = self.lfos[ind]
+        filter.setAdd(freq)
 
-    @Slot(int)
-    def set_freq1(self, freq):
-        self.lfo1.setAdd(freq)
+    @Slot(int, float)
+    def set_filter_width(self, ind, width):
+        filter = self.lfos[ind]
+        filter.setMul(width)
 
-    @Slot(int)
-    def set_filter_width1(self, width):
-        self.lfo1.setMul(width)
+    @Slot(int, float)
+    def set_filter_rate(self, ind, rate):
+        filter = self.lfos[ind]
+        filter.setFreq(rate)
 
-    @Slot(float)
-    def set_filter_rate1(self, rate):
-        self.lfo1.setFreq(rate)
+    @Slot(int, float)
+    def set_filter_Q(self, ind, q):
+        filter = self.filters[ind]
+        filter.setQ(q)
 
-    @Slot(int)
-    def set_Q1(self, q):
-        self.filter1.setQ(q)
-
-    @Slot(float)
-    def set_resonance1(self, res):
-        self.filter1.setRes(res)
-
-    @Slot(int)
-    def set_filter1(self, filter_type):
-        self.filter1.setType(filter_type)
-
-    @Slot()
-    def toggle_filter1(self):
-        if self.f1_toggle:
-            del self.osc1out
-            self.osc1out = self.pan1.out()
-        else:
-            del self.osc1out
-            self.osc1out = self.filter1.out()
-        self.f1_toggle = not self.f1_toggle
-
-    @Slot(int)
-    def set_freq2(self, freq):
-        self.lfo2.setAdd(freq)
-
-    @Slot(int)
-    def set_filter_width2(self, width):
-        self.lfo2.setMul(width)
-
-    @Slot(float)
-    def set_filter_rate2(self, rate):
-        self.lfo2.setFreq(rate)
-
-    @Slot(int)
-    def set_Q2(self, q):
-        self.filter2.setQ(q)
-
-    @Slot(float)
-    def set_resonance2(self, res):
-        self.filter2.setRes(res)
-
-    @Slot(int)
-    def set_filter2(self, filter_type):
-        self.filter2.setType(filter_type)
-
-    @Slot()
-    def toggle_filter2(self):
-        if self.f2_toggle:
-            del self.osc2out
-            self.osc2out = self.pan2.out()
-        else:
-            del self.osc2out
-            self.osc2out = self.filter2.out()
-        self.f2_toggle = not self.f2_toggle
-
-    @Slot(int)
-    def set_freq3(self, freq):
-        self.lfo3.setAdd(freq)
-
-    @Slot(int)
-    def set_filter_width3(self, width):
-        self.lfo3.setMul(width)
-
-    @Slot(float)
-    def set_filter_rate3(self, rate):
-        self.lfo3.setFreq(rate)
-
-    @Slot(int)
-    def set_Q3(self, q):
-        self.filter3.setQ(q)
-
-    @Slot(float)
-    def set_resonance3(self, res):
-        self.filter3.setRes(res)
-
-    @Slot(int)
-    def set_filter3(self, filter_type):
-        self.filter3.setType(filter_type)
-
-    @Slot()
-    def toggle_filter3(self):
-        if self.f3_toggle:
-            # self.filter3.stop()
-            self.osc3out = self.pan3.out()
-        else:
-            # self.osc3out.stop()
-            self.osc3out = self.filter3.out()
-        self.f3_toggle = not self.f3_toggle
+    @Slot(int, int)
+    def set_filter_shape(self, ind, shape):
+        filter = self.filters[ind]
+        filter.setType(shape)
 
     @Slot(float)
     def filter1_mix(self, mix):
@@ -364,29 +188,9 @@ class PyoThread(QObject):
         self.osc3out.setVoice(mix * .01)
 
     @Slot(int, float)
-    def filter_mix(self, ind, mix):
+    def set_filter_mix(self, ind, mix):
         mix_functions = [self.filter1_mix, self.filter2_mix, self.filter3_mix]
         mix_functions[ind](mix)
-
-    @Slot(int)
-    def toggle_oscillator(self, ind):
-        toggle_functions = [self.toggle_osc1, self.toggle_osc2, self.toggle_osc3]
-        toggle_functions[ind]()
-
-    @Slot(int, int)
-    def set_oscillator(self, ind, wave):
-        set_functions = [self.set_osc1, self.set_osc2, self.set_osc3]
-        set_functions[ind](wave)
-
-    @Slot(int)
-    def toggle_filter(self, ind):
-        toggle_functions = [self.toggle_filter1, self.toggle_filter2, self.toggle_filter3]
-        toggle_functions[ind]()
-
-    @Slot(int, int)
-    def set_filter(self, ind, shape):
-        set_functions = [self.set_filter1, self.set_filter2, self.set_filter3]
-        set_functions[ind](shape)
 
     @Slot(float)
     def set_drive(self, drive):
@@ -481,3 +285,8 @@ class PyoThread(QObject):
     @Slot()
     def stop_playback(self):
         self.playback_thread.stop_playback()
+
+    @Slot()
+    def end_playback(self):
+        self.stop_playback()
+        self.playbackFinished.emit()

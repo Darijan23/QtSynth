@@ -39,6 +39,8 @@ class CustomClock:
 
 
 class PlaybackThread(QThread):
+    playback_finished = Signal()
+
     def __init__(self, server, file: MidiFile):
         super().__init__()
         self.s = server
@@ -66,7 +68,8 @@ class PlaybackThread(QThread):
         while not self.file:
             self.sleep(1)
         while True:
-            self.playback()
+            if not self.playback_in_progress:
+                self.playback()
 
     def playback(self):
         self.playback_in_progress = True
@@ -77,6 +80,7 @@ class PlaybackThread(QThread):
                 self.msleep(500)
             self.s.addMidiEvent(*message.bytes())
         self.stop_playback()
+        self.playback_finished.emit()
 
     def start_playback(self):
         if self.reset:

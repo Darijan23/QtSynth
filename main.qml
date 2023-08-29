@@ -20,38 +20,38 @@ ApplicationWindow {
         ObjectModel {
             id: oscillatorModel1
 
-            KnobGroup { id: octave1; type: "Octave"; min: -2; max: 2; defaultValue: 0; mod: pyo.set_octave1(parseFloat(textValue)) }
-            KnobGroup { id: level1; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level1(parseFloat(textValue)) }
-            KnobGroup { id: detune1; type: "Detune"; min: -50; max: 50; defaultValue: 0; mod: pyo.set_detune1(parseFloat(textValue)) }
-            KnobGroup { id: pan1; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan1(parseFloat(textValue)) }
-            KnobGroup { id: attack1; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A1(parseFloat(textValue)) }
-            KnobGroup { id: decay; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D1(parseFloat(textValue)) }
-            KnobGroup { id: sustain1; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S1(parseFloat(textValue)) }
-            KnobGroup { id: release1; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R1(parseFloat(textValue)) }
+            KnobGroup { id: octave1; type: "Octave"; min: -2; max: 2; defaultValue: 0; ind: 0; mod: pyo.set_octave(ind, parseFloat(textValue)) }
+            KnobGroup { id: level1; type: "Level"; min: 0; max: 100; defaultValue: 100; ind: 0; mod: pyo.set_level(ind, parseFloat(textValue)) }
+            KnobGroup { id: detune1; type: "Detune"; min: -50; max: 50; defaultValue: 0; ind: 0; mod: pyo.set_detune(ind, parseFloat(textValue)) }
+            KnobGroup { id: pan1; type: "Pan"; min: -100; max: 100; defaultValue: 0; ind: 0; mod: pyo.set_pan(ind, parseFloat(textValue)) }
+            KnobGroup { id: attack1; type: "Attack"; min: 0; max: 1000; defaultValue: 10; ind: 0; mod: pyo.set_ADSR(ind, "A", parseFloat(textValue)) }
+            KnobGroup { id: decay; type: "Decay"; min: 0; max: 1000; defaultValue: 50; ind: 0; mod: pyo.set_ADSR(ind, "D", parseFloat(textValue)) }
+            KnobGroup { id: sustain1; type: "Sustain"; min: 0; max: 100; defaultValue: 50; ind: 0; mod: pyo.set_ADSR(ind, "S", parseFloat(textValue)) }
+            KnobGroup { id: release1; type: "Release"; min: 0; max: 5000; defaultValue: 100; ind: 0; mod: pyo.set_ADSR(ind, "R", parseFloat(textValue)) }
         },
 
         ObjectModel {
             id: oscillatorModel2
 
-            KnobGroup { id: octave2; type: "Octave"; min: -2; max: 2; defaultValue: 0; mod: pyo.set_octave2(parseFloat(textValue)) }
-            KnobGroup { id: level2; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level2(parseFloat(textValue)) }
-            KnobGroup { id: detune2; type: "Detune"; min: -50; max: 50; defaultValue: 0; mod: pyo.set_detune2(parseFloat(textValue)) }
-            KnobGroup { id: pan2; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan2(parseFloat(textValue)) }
-            KnobGroup { id: attack2; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A2(parseFloat(textValue)) }
-            KnobGroup { id: decay2; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D2(parseFloat(textValue)) }
-            KnobGroup { id: sustain2; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S2(parseFloat(textValue)) }
-            KnobGroup { id: release2; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R2(parseFloat(textValue)) }
+            KnobGroup { id: octave2; type: "Octave"; min: -2; max: 2; defaultValue: 0; ind: 1; mod: pyo.set_octave(ind, parseFloat(textValue)) }
+            KnobGroup { id: level2; type: "Level"; min: 0; max: 100; defaultValue: 100; ind: 1;  mod: pyo.set_level(ind, parseFloat(textValue)) }
+            KnobGroup { id: detune2; type: "Detune"; min: -50; max: 50; defaultValue: 0; ind: 1;  mod: pyo.set_detune(ind, parseFloat(textValue)) }
+            KnobGroup { id: pan2; type: "Pan"; min: -100; max: 100; defaultValue: 0; ind: 1;  mod: pyo.set_pan(ind, parseFloat(textValue)) }
+            KnobGroup { id: attack2; type: "Attack"; min: 0; max: 1000; defaultValue: 10; ind: 1;  mod: pyo.set_ADSR(ind, "A", parseFloat(textValue)) }
+            KnobGroup { id: decay2; type: "Decay"; min: 0; max: 1000; defaultValue: 50; ind: 1;  mod: pyo.set_ADSR(ind, "D", parseFloat(textValue)) }
+            KnobGroup { id: sustain2; type: "Sustain"; min: 0; max: 100; defaultValue: 50; ind: 1;  mod: pyo.set_ADSR(ind, "S", parseFloat(textValue)) }
+            KnobGroup { id: release2; type: "Release"; min: 0; max: 5000; defaultValue: 100; ind: 1;  mod: pyo.set_ADSR(ind, "R", parseFloat(textValue)) }
         },
 
         ObjectModel {
             id: oscillatorModel3
 
-            KnobGroup { id: attack3; type: "Attack"; min: 0; max: 1000; defaultValue: 10; mod: pyo.set_A3(parseFloat(textValue)) }
-            KnobGroup { id: decay3; type: "Decay"; min: 0; max: 1000; defaultValue: 50; mod: pyo.set_D3(parseFloat(textValue)) }
-            KnobGroup { id: sustain3; type: "Sustain"; min: 0; max: 100; defaultValue: 50; mod: pyo.set_S3(parseFloat(textValue)) }
-            KnobGroup { id: release3; type: "Release"; min: 0; max: 5000; defaultValue: 100; mod: pyo.set_R3(parseFloat(textValue)) }
-            KnobGroup { id: level3; type: "Level"; min: 0; max: 100; defaultValue: 100; mod: pyo.set_level3(parseFloat(textValue)) }
-            KnobGroup { id: pan3; type: "Pan"; min: -100; max: 100; defaultValue: 0; mod: pyo.set_pan3(parseFloat(textValue)) }
+            KnobGroup { id: attack3; type: "Attack"; min: 0; max: 1000; defaultValue: 10; ind: 2; mod: pyo.set_ADSR(ind, "A", parseFloat(textValue)) }
+            KnobGroup { id: decay3; type: "Decay"; min: 0; max: 1000; defaultValue: 50; ind: 2; mod: pyo.set_ADSR(ind, "D", parseFloat(textValue)) }
+            KnobGroup { id: sustain3; type: "Sustain"; min: 0; max: 100; defaultValue: 50; ind: 2; mod: pyo.set_ADSR(ind, "S", parseFloat(textValue)) }
+            KnobGroup { id: release3; type: "Release"; min: 0; max: 5000; defaultValue: 100; ind: 2; mod: pyo.set_ADSR(ind, "R", parseFloat(textValue)) }
+            KnobGroup { id: level3; type: "Level"; min: 0; max: 100; defaultValue: 100; ind: 2; mod: pyo.set_level(ind, parseFloat(textValue)) }
+            KnobGroup { id: pan3; type: "Pan"; min: -100; max: 100; defaultValue: 0; ind: 2; mod: pyo.set_pan(ind, parseFloat(textValue)) }
         }
     ]
 
@@ -59,28 +59,28 @@ ApplicationWindow {
         ObjectModel {
             id: filterModel1
 
-            KnobGroup { id: rate1; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate1(parseFloat(textValue)); step: 0.01 }
-            KnobGroup { id: freq1; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq1(parseFloat(textValue)) }
-            KnobGroup { id: width1; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width1(parseFloat(textValue)) }
-            KnobGroup { id: q1; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q1(parseFloat(textValue)) }
+            KnobGroup { id: rate1; type: "Rate"; min: 0; max: 20; defaultValue: 1; ind: 0; mod: pyo.set_filter_rate(ind, parseFloat(textValue)); step: 0.01 }
+            KnobGroup { id: freq1; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; ind: 0; mod: pyo.set_filter_freq(ind, parseFloat(textValue)) }
+            KnobGroup { id: width1; type: "Width"; min: 0; max: 10000; defaultValue: 100; ind: 0; mod: pyo.set_filter_width(ind, parseFloat(textValue)) }
+            KnobGroup { id: q1; type: "Q"; min: 1; max: 10; defaultValue: 1; ind: 0; mod: pyo.set_filter_Q(ind, parseFloat(textValue)) }
         },
 
         ObjectModel {
             id: filterModel2
 
-            KnobGroup { id: rate2; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate2(parseFloat(textValue)); step: 0.01 }
-            KnobGroup { id: freq2; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq2(parseFloat(textValue)) }
-            KnobGroup { id: width2; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width2(parseFloat(textValue)) }
-            KnobGroup { id: q2; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q2(parseFloat(textValue)) }
+            KnobGroup { id: rate2; type: "Rate"; min: 0; max: 20; defaultValue: 1; ind: 1; mod: pyo.set_filter_rate(ind, parseFloat(textValue)); step: 0.01 }
+            KnobGroup { id: freq2; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; ind: 1; mod: pyo.set_filter_freq(ind, parseFloat(textValue)) }
+            KnobGroup { id: width2; type: "Width"; min: 0; max: 10000; defaultValue: 100; ind: 1; mod: pyo.set_filter_width(ind, parseFloat(textValue)) }
+            KnobGroup { id: q2; type: "Q"; min: 1; max: 10; defaultValue: 1; ind: 1; mod: pyo.set_filter_Q(ind, parseFloat(textValue)) }
         },
 
         ObjectModel {
             id: filterModel3
 
-            KnobGroup { id: rate3; type: "Rate"; min: 0; max: 20; defaultValue: 1; mod: pyo.set_filter_rate3(parseFloat(textValue)); step: 0.01 }
-            KnobGroup { id: freq3; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; mod: pyo.set_freq3(parseFloat(textValue)) }
-            KnobGroup { id: width3; type: "Width"; min: 0; max: 10000; defaultValue: 100; mod: pyo.set_filter_width3(parseFloat(textValue)) }
-            KnobGroup { id: q3; type: "Q"; min: 1; max: 10; defaultValue: 1; mod: pyo.set_Q3(parseFloat(textValue)) }
+            KnobGroup { id: rate3; type: "Rate"; min: 0; max: 20; defaultValue: 1; ind: 2; mod: pyo.set_filter_rate(ind, parseFloat(textValue)); step: 0.01 }
+            KnobGroup { id: freq3; type: "Frequency"; min: 0; max: 20000; defaultValue: 1000; ind: 2; mod: pyo.set_filter_freq(ind, parseFloat(textValue)) }
+            KnobGroup { id: width3; type: "Width"; min: 0; max: 10000; defaultValue: 100; ind: 2; mod: pyo.set_filter_width(ind, parseFloat(textValue)) }
+            KnobGroup { id: q3; type: "Q"; min: 1; max: 10; defaultValue: 1; ind: 2; mod: pyo.set_filter_Q(ind, parseFloat(textValue)) }
         }
     ]
 
@@ -297,8 +297,20 @@ ApplicationWindow {
         }
     }
 
+    function finishPlayback() {
+        midiTab.playing = false;
+        midiTab.stopped = true;
+    }
+
     PyoThread {
         id: pyo
+    }
+
+    Connections {
+        target: pyo
+        function onPlaybackFinished() {
+            finishPlayback()
+        }
     }
 
     RowLayout {
@@ -319,7 +331,6 @@ ApplicationWindow {
         SpinBox {
             id: bpm
             width: 40
-            height: 30
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
             value: 120
             from: 1
@@ -416,7 +427,7 @@ ApplicationWindow {
                 id: fxGridView
                 anchors.fill: parent
                 cellWidth: 550
-                cellHeight: 200
+                cellHeight: 180
                 currentIndex: -1    // hack ali radi
                 model: fxModel
             }
