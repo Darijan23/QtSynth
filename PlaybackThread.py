@@ -81,16 +81,14 @@ class PlaybackThread(QThread):
             while not self.play:
                 self.msleep(500)
             self.s.addMidiEvent(*message.bytes())
-        self.stop_playback()
-        self.playback_finished.emit()
+        self.finish_playback()
 
     def start_playback(self):
         if self.reset:
             self.play = True
             self.reset = False
             self.clock.start()
-            if not self.playback_in_progress:
-                self.playback()
+            self.messages = self.file.play(now=self.clock.get_time)
         else:
             self.resume_playback()
 
@@ -108,6 +106,10 @@ class PlaybackThread(QThread):
 
     def stop_playback(self):
         self.pause()
-        self.messages = self.file.play(now=self.clock.get_time)
+        self.messages = None
         self.reset = True
         self.playback_in_progress = False
+
+    def finish_playback(self):
+        self.stop_playback()
+        self.playback_finished.emit()
