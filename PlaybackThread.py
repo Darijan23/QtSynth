@@ -73,9 +73,11 @@ class PlaybackThread(QThread):
 
     def playback(self):
         self.playback_in_progress = True
+        while self.reset:
+            self.msleep(500)
         for message in self.messages:
             if self.reset:
-                break
+                return
             while not self.play:
                 self.msleep(500)
             self.s.addMidiEvent(*message.bytes())
