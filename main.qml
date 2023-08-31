@@ -158,6 +158,64 @@ ApplicationWindow {
         }
     }
 
+    Dialog {
+        id: settingsDialog
+        width: 250
+        height: 300
+        x: parent.width - width
+        y: parent.height - height
+
+        visible: false
+
+        title: "Settings"
+
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 10
+
+            ScrollView {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                RowLayout {
+                    spacing: 10
+
+                    Label {
+                        text: "Dial control"
+                        horizontalAlignment: Text.AlignLeft
+                    }
+
+                    ComboBox {
+                        width: 80
+                        model: ["Vertical", "Horizontal", "Circular"]
+                        currentIndex: 0
+                        onCurrentIndexChanged: {
+                            switch (currentIndex) {
+                                case 0:
+                                    dialInputMode = Dial.Vertical
+                                    break
+                                case 1:
+                                    dialInputMode = Dial.Horizontal
+                                    break
+                                case 2:
+                                    dialInputMode = Dial.Circular
+                                    break
+                            }
+                        }
+                    }
+                }
+            }
+
+            Button {
+                text: "Close"
+                Layout.alignment: Qt.AlignBottom | Qt.AlignRight
+                Layout.bottomMargin: 5
+                Layout.rightMargin: 5
+                onClicked: settingsDialog.close()
+            }
+        }
+    }
+
     function serialize(groups, effects) {
         var serializedOscillators = [];
         var serializedFilters = [];
@@ -297,6 +355,12 @@ ApplicationWindow {
         }
     }
 
+    function extractFileName(file) {
+        var filePath = file.toString()
+        var fileNameWithExtension = filePath.substring(filePath.lastIndexOf('/') + 1);
+        return fileNameWithExtension.replace(/\.[^.]+$/, '');
+    }
+
     function finishPlayback() {
         midiTab.playing = false;
         midiTab.stopped = true;
@@ -313,12 +377,14 @@ ApplicationWindow {
         }
     }
 
+    property string presetName: "Default"
+
     RowLayout {
         id: bpmRow
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        Layout.topMargin: 10
-        Layout.bottomMargin: 10
-        spacing: 10
+        Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+        Layout.fillWidth: true
+        width: parent.width
+        spacing: 5
 
         Label {
             Layout.leftMargin: 10
@@ -338,11 +404,27 @@ ApplicationWindow {
             onValueModified: pyo.set_bpm(value)
         }
 
+        Item {
+            // spacer item
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumWidth: 20
+            property var type: "spacer"
+        }
+
+        Label {
+            id: presetLabel
+            text: "Preset: %1".arg(presetName)
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+        }
+
         FileDialog {
             id: presetLoadFileDialog
             fileMode: FileDialog.OpenFile
             nameFilters: ["JSON files (*.json)", "Any (*)"]
             onAccepted: {
+                presetName = extractFileName(selectedFile);
                 readFile(selectedFile);
             }
         }
@@ -354,6 +436,7 @@ ApplicationWindow {
             defaultSuffix: "json"
             onAccepted: {
                 var preset_content = serialize(groupModel, fxModel)
+                presetName = extractFileName(selectedFile);
                 pyo.save_preset(preset_content, selectedFile);
             }
         }
@@ -361,7 +444,7 @@ ApplicationWindow {
         Button {
             id: presetSave
             text: "Save preset"
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             onClicked: {
                 presetSaveFileDialog.open()
             }
@@ -370,7 +453,8 @@ ApplicationWindow {
         Button {
             id: presetLoad
             text: "Load preset"
-            Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.rightMargin: 5
             onClicked: {
                 presetLoadFileDialog.open()
             }
@@ -383,15 +467,20 @@ ApplicationWindow {
         anchors.top: bpmRow.bottom
         anchors.left: parent.left
         width: parent.width
+        font.pixelSize: 16
+        height: 25
 
         TabButton {
             text: "Oscillators"
+            height: parent.height
         }
         TabButton {
             text: "Effects"
+            height: parent.height
         }
         TabButton {
             text: "MIDI"
+            height: parent.height
         }
     }
 
@@ -492,33 +581,16 @@ ApplicationWindow {
 
     RowLayout {
         anchors.bottom: parent.bottom
+        width: parent.width
         Layout.alignment: Qt.AlignBottom
+        Layout.fillWidth: true
 
-        Label {
-            text: "Dial control"
-            width: 100
-            horizontalAlignment: Text.AlignRight
+        Button {
+            text: "Settings"
             Layout.alignment: Qt.AlignRight
-        }
-
-        ComboBox {
-            width: 100
-            Layout.alignment: Qt.AlignRight
-            model: ["Vertical", "Horizontal", "Circular"]
-            currentIndex: 0
-            onCurrentIndexChanged: {
-                switch (currentIndex) {
-                    case 0:
-                        dialInputMode = Dial.Vertical
-                        break
-                    case 1:
-                        dialInputMode = Dial.Horizontal
-                        break
-                    case 2:
-                        dialInputMode = Dial.Circular
-                        break
-                }
-            }
+            Layout.rightMargin: 5
+            Layout.bottomMargin: 5
+            onClicked: settingsDialog.open()
         }
     }
 }
